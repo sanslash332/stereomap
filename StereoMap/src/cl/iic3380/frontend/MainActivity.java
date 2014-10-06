@@ -1,10 +1,14 @@
-package cl.IIC3380.stereomap;
+package cl.iic3380.frontend;
 
 import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
 import org.pielot.openal.Source;
 
+import cl.iic3380.backend.MyLocationListener;
+
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,6 +38,12 @@ public class MainActivity extends ActionBarActivity {
 
 		this.setContentView(R.layout.main);
 
+		//Localización
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		//Instaciamos nuestro location listener
+		MyLocationListener locationListener = new MyLocationListener();
+		//Registramos
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 		try {
 			
 			/* First we obtain the instance of the sound environment. */
@@ -152,7 +162,6 @@ public class MainActivity extends ActionBarActivity {
 		} catch (Exception e) {
 			Log.e(TAG, "could not initialise OpenAL4Android", e);
 		}
-		
 	}
 
 
@@ -196,6 +205,8 @@ public class MainActivity extends ActionBarActivity {
 	public void onLowMemory() {
 		this.env.onLowMemory();
 	}
+	
+	
 	
 	private void ChangeXPosition(int currentPos)
 	{
