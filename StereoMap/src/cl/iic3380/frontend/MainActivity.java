@@ -1,8 +1,9 @@
 package cl.iic3380.frontend;
 
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
@@ -10,73 +11,68 @@ import org.pielot.openal.Source;
 
 
 import cl.iic3380.backend.*;
+import cl.iic3380.utils.Utils;
 
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements OnInitListener {
 
+	private LocationManager locationManager;
+	private MyLocationListener locationListener;
+	private String bestProvider;
+	private PlacesManager placesManager;
+	private String radius;
+	private SoundEnv env;
+	private Source currentSource;
+	private String currentFileName;
+	private String[] synthResult;
+	private List<Place> places;
+
+	private TextToSpeech tts;
+	// This code can be any value you want, its just a checksum.
+	private static final int MY_DATA_CHECK_CODE = 1234;
 
 	/*
 	 * Codigo de respaldo librería OPENAL
 	 */
 
-	private final static String	TAG	= "HelloOpenAL4Android";
-	private SoundEnv			env;
-	private Source				lake1;
-	private Source				lake2;
-	private Source				park1;
-	private int lastPositionX;
-	private int lastPositionY;
-	private int lastPositionZ;
-	private int delta;
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(TAG, "onCreate()");
 		this.setContentView(R.layout.main);
 
 		//Localización
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		//Sacar mejor provider y location
-		String bestProvider = locationManager.getBestProvider(getFineCriteria(),true);
-		Location userLocation = locationManager.getLastKnownLocation(bestProvider);
+		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);
 
-		String radius = "500";
-		
+		radius="500";
+
 		TextView tv = (TextView)findViewById(R.id.textView1);
-		PlacesManager pm = new PlacesManager();
-		MyLocationListener locationListener = new MyLocationListener(pm,tv,radius);
+		placesManager = new PlacesManager();
+		locationListener = new MyLocationListener(placesManager,tv,radius);
 		locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-		try 
-		{
-			String s = "";
-			List<Place> places = pm.parsePlaces(radius, userLocation);
-			for(Place p : places)
-			{
-				s+="Name: "+p.getName()+" - Type: "+p.getTypes().toString()+"\n";
-			}
-			tv.setText(s);
-			
-		} catch (Exception e1) 
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
+		// Fire off an intent to check if a TTS engine is installed
+		Intent checkIntent = new Intent();
+		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+
 		//		try {
 		//
 		//			/* First we obtain the instance of the sound environment. */
@@ -87,8 +83,8 @@ public class MainActivity extends ActionBarActivity {
 		//			 * copy them into the assets folder of the Android project.
 		//			 * Currently only mono .wav files are supported.
 		//			 */
-		//			Buffer lake = env.addBuffer("lake");
-		//			Buffer park = env.addBuffer("park");
+		//			Buffer placeBuffer = env.addBuffer(synthResult[0], synthResult[1]);
+		//			//	Buffer placeBuffer = env.addBuffer(currentFileName);
 		//
 		//			/*
 		//			 * To actually play a sound and place it somewhere in the sound
@@ -96,17 +92,13 @@ public class MainActivity extends ActionBarActivity {
 		//			 * parameters, such as 3D position or pitch. Several sources can
 		//			 * share a single buffer.
 		//			 */
-		//			this.lake1 = env.addSource(lake);
-		//			this.lake2 = env.addSource(lake);
-		//			this.park1 = env.addSource(park);
+		//			currentSource = env.addSource(placeBuffer);
 		//
 		//			// Now we spread the sounds throughout the sound room.
-		//			this.lake1.setPosition(0, 0, -10);
-		//			this.lake2.setPosition(-6, 0, 4);
-		//			this.park1.setPosition(0, 0, 0);
+		//			currentSource.setPosition(0, 0, 0);
 		//
 		//			// and change the pitch of the second lake.
-		//			this.lake2.setPitch(1.1f);
+		//			currentSource.setPitch(1.1f);
 		//
 		//			/*
 		//			 * These sounds are perceived from the perspective of a virtual
@@ -115,146 +107,135 @@ public class MainActivity extends ActionBarActivity {
 		//			 * adjusted via the SoundEnv class.
 		//			 */
 		//			this.env.setListenerOrientation(20);
-		//			lastPositionX=0;
-		//			lastPositionY=0;
-		//			lastPositionZ=0;
-		//
-		//			SeekBar sliderX = (SeekBar)findViewById(R.id.sliderX);
-		//			SeekBar sliderY = (SeekBar)findViewById(R.id.sliderY);
-		//			SeekBar sliderZ = (SeekBar)findViewById(R.id.sliderZ);
-		//			delta = 25;
-		//			sliderX.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-		//
-		//				@Override
-		//				public void onStopTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//
-		//				@Override
-		//				public void onStartTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//
-		//				@Override
-		//				public void onProgressChanged(SeekBar seekBar, int progress,
-		//						boolean fromUser) {
-		//					ChangeXPosition(seekBar.getProgress());
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//			});
-		//
-		//			sliderY.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-		//
-		//				@Override
-		//				public void onStopTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
 		//
 		//
-		//				}
 		//
-		//				@Override
-		//				public void onStartTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//
-		//				@Override
-		//				public void onProgressChanged(SeekBar seekBar, int progress,
-		//						boolean fromUser) {
-		//					ChangeYPosition(seekBar.getProgress());
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//			});
-		//			sliderZ.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-		//
-		//				@Override
-		//				public void onStopTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//
-		//				@Override
-		//				public void onStartTrackingTouch(SeekBar seekBar) {
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//
-		//				@Override
-		//				public void onProgressChanged(SeekBar seekBar, int progress,
-		//						boolean fromUser) {
-		//					ChangeZPosition(seekBar.getProgress());
-		//					// TODO Auto-generated method stub
-		//
-		//				}
-		//			});
 		//
 		//		} catch (Exception e) {
-		//			Log.e(TAG, "could not initialise OpenAL4Android", e);
+		//			e.printStackTrace();
 		//		}
 
 
 	}
-	
-	public Criteria getFineCriteria() {
 
-		  Criteria c = new Criteria();
-		  c.setAccuracy(Criteria.ACCURACY_FINE);
-		  c.setAltitudeRequired(false);
-		  c.setBearingRequired(false);
-		  c.setSpeedRequired(false);
-		  c.setCostAllowed(true);
-		  c.setPowerRequirement(Criteria.POWER_HIGH);
-		  return c;
 
+
+	@Override
+	public void onInit(int status) {
+//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
+//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
+//				null);
+		
+		//ESCRIBIR EL AUDIO
+		String result = "";
+		try 
+		{
+			Location userLocation = locationManager.getLastKnownLocation(bestProvider);
+			places = placesManager.parsePlaces(radius, userLocation);
+			for(Place p : places)
+			{
+				result+=p.GetSpeakedString()+".";
+			}
+			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
+			//Utils.SpeakText(tts, result);
+			File file = Environment.getExternalStorageDirectory();
+			
+			HashMap<String, String> myHashRender = new HashMap<String,String>();
+			myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, result);
+			tts.synthesizeToFile(result, myHashRender, file.getAbsolutePath()+"/sometext.wav");
+		} 
+		catch (Exception e1) 
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		
+		
+		//synthResult = ttsSynth.speakText(result);
+		
+
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		//Instalar dependencias
+		if (requestCode == MY_DATA_CHECK_CODE)
+		{
+			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
+			{
+				// success, create the TTS instance
+				tts = new TextToSpeech(this, this);
+			}
+			else
+			{
+				// missing data, install it
+				Intent installIntent = new Intent();
+				installIntent.setAction(
+						TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+				startActivity(installIntent);
+			}
+		}
+	}
+
+	/**
+	 * Be kind, once you've finished with the TTS engine, shut it down so other
+	 * applications can use it without us interfering with it :)
+	 */
+	@Override
+	public void onDestroy()
+	{
+		// Don't forget to shutdown!
+		if (tts != null)
+		{
+			tts.stop();
+			tts.shutdown();
+		}
+		super.onDestroy();
+	}
 
 
 	//	LIBRERÏA
-//	@Override
-//	public void onResume() {
-//		super.onResume();
-//		Log.i(TAG, "onResume()");
-//
-//		/*
-//		 * Start playing all sources. 'true' as parameter specifies that the
-//		 * sounds shall be played as a loop.
-//		 */
-//		//this.lake1.play(true);
-//		//this.lake2.play(true);
-//		this.park1.play(true);
-//	}
-//
-//	@Override
-//	public void onPause() {
-//		super.onPause();
-//		Log.i(TAG, "onPause()");
-//
-//		// Stop all sounds
-//		this.lake1.stop();
-//		this.lake2.stop();
-//		this.park1.stop();
-//
-//	}
-//
-//	@Override
-//	public void onDestroy() {
-//		super.onDestroy();
-//		Log.i(TAG, "onDestroy()");
-//
-//		// Be nice with the system and release all resources
-//		this.env.stopAllSources();
-//		this.env.release();
-//	}
-//
-//	@Override
-//	public void onLowMemory() {
-//		this.env.onLowMemory();
-//	}
-//
+	//	@Override
+	//	public void onResume() {
+	//		super.onResume();
+	//		Log.i(TAG, "onResume()");
+	//
+	//		/*
+	//		 * Start playing all sources. 'true' as parameter specifies that the
+	//		 * sounds shall be played as a loop.
+	//		 */
+	//		//this.lake1.play(true);
+	//		//this.lake2.play(true);
+	//		this.park1.play(true);
+	//	}
+	//
+	//	@Override
+	//	public void onPause() {
+	//		super.onPause();
+	//		Log.i(TAG, "onPause()");
+	//
+	//		// Stop all sounds
+	//		this.lake1.stop();
+	//		this.lake2.stop();
+	//		this.park1.stop();
+	//
+	//	}
+	//
+	//	@Override
+	//	public void onDestroy() {
+	//		super.onDestroy();
+	//		Log.i(TAG, "onDestroy()");
+	//
+	//		// Be nice with the system and release all resources
+	//		this.env.stopAllSources();
+	//		this.env.release();
+	//	}
+	//
+	//	@Override
+	//	public void onLowMemory() {
+	//		this.env.onLowMemory();
+	//	}
+	//
 
 
 	//	private void ChangeXPosition(int currentPos)

@@ -25,4 +25,14 @@ public class Place {
 		return types;
 	}
 	
+	public String GetSpeakedString()
+	{
+		String result = name;
+		for(String type : types)
+		{
+			result+="."+type;
+		}
+		return result;
+	}
+
 }
