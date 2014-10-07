@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	private static final int MY_DATA_CHECK_CODE = 1234;
 
 	/*
-	 * Codigo de respaldo librería OPENAL
+	 * Codigo de respaldo librerï¿½a OPENAL
 	 */
 
 
@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
 
-		//Localización
+		//Localizaciï¿½n
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		//Sacar mejor provider y location
@@ -128,21 +128,25 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		
 		//ESCRIBIR EL AUDIO
 		String result = "";
+		File file = Environment.getExternalStorageDirectory();	
+		String externalStoragePath = file.getAbsolutePath();
+		HashMap<String, String> myHashRender = new HashMap<String,String>();
 		try 
 		{
 			Location userLocation = locationManager.getLastKnownLocation(bestProvider);
 			places = placesManager.parsePlaces(radius, userLocation);
+			File appTmpPath = new File(externalStoragePath + "/sounds/");
+			appTmpPath.mkdirs();
 			for(Place p : places)
 			{
-				result+=p.GetSpeakedString()+".";
+				String fileName = p.getName()+".wav";
+				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
+				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
+				tts.synthesizeToFile(result, myHashRender, destinationPath);
+				myHashRender.clear();
 			}
 			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 			//Utils.SpeakText(tts, result);
-			File file = Environment.getExternalStorageDirectory();
-			
-			HashMap<String, String> myHashRender = new HashMap<String,String>();
-			myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, result);
-			tts.synthesizeToFile(result, myHashRender, file.getAbsolutePath()+"/sometext.wav");
 		} 
 		catch (Exception e1) 
 		{
@@ -194,7 +198,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	}
 
 
-	//	LIBRERÏA
+	//	LIBRERï¿½A
 	//	@Override
 	//	public void onResume() {
 	//		super.onResume();
