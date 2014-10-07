@@ -1,15 +1,21 @@
 package cl.iic3380.frontend;
 
+import java.util.concurrent.ExecutionException;
+
 import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
 import org.pielot.openal.Source;
 
+<<<<<<< HEAD:StereoMap/src/cl/iic3380/frontend/MainActivity.java
 import cl.iic3380.backend.MyLocationListener;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.location.LocationManager;
+=======
+>>>>>>> origin/GooglePlaces:StereoMap/src/cl/IIC3380/stereomap/MainActivity.java
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,8 +40,17 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		PlacesManager pm = new PlacesManager();
+		try {
+			pm.parsePlaces("500", "-33.8670522,151.1957362");
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Log.i(TAG, "onCreate()");
-
 		this.setContentView(R.layout.main);
 
 		//Localización
