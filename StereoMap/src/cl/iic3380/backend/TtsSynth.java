@@ -2,6 +2,7 @@ package cl.iic3380.backend;
 
 import java.util.HashMap;
 import java.util.Locale;
+
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
@@ -24,8 +25,8 @@ public class TtsSynth {
 	}	
 
 
-	public void speakText(String toSpeak){
-		  HashMap<String, String> myHashRender = new HashMap();
+	public String speakText(String toSpeak){
+		  HashMap<String, String> myHashRender = new HashMap<String, String>();
 	      myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, toSpeak);
 	      String destFileName;
 	      if(toSpeak.length()>20)
@@ -34,6 +35,7 @@ public class TtsSynth {
 	    	  destFileName = "/storage/extSdCard/StereoMap/"+toSpeak+".wav";
 	      //ttobj.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 	      ttobj.synthesizeToFile(toSpeak, myHashRender, destFileName);
+	      return destFileName;
 	   }
 	
 	
