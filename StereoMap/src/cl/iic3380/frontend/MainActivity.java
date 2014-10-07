@@ -5,10 +5,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
-import org.pielot.openal.Source;
-
 
 import cl.iic3380.backend.*;
 import cl.iic3380.utils.Utils;
@@ -35,8 +32,9 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	private String bestProvider;
 	private PlacesManager placesManager;
 	private String radius;
+	
 	private SoundEnv env;
-	private Source currentSource;
+	
 	private String currentFileName;
 	private String[] synthResult;
 	private List<Place> places;
@@ -54,6 +52,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
+		this.env = SoundEnv.getInstance(this);
 
 		//Localizaci�n
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -73,48 +72,6 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 
-		//		try {
-		//
-		//			/* First we obtain the instance of the sound environment. */
-		//			this.env = SoundEnv.getInstance(this);
-		//			/*
-		//			 * Now we load the sounds into the memory that we want to play
-		//			 * later. Each sound has to be buffered once only. To add new sound
-		//			 * copy them into the assets folder of the Android project.
-		//			 * Currently only mono .wav files are supported.
-		//			 */
-		//			Buffer placeBuffer = env.addBuffer(synthResult[0], synthResult[1]);
-		//			//	Buffer placeBuffer = env.addBuffer(currentFileName);
-		//
-		//			/*
-		//			 * To actually play a sound and place it somewhere in the sound
-		//			 * environment, we have to create sources. Each source has its own
-		//			 * parameters, such as 3D position or pitch. Several sources can
-		//			 * share a single buffer.
-		//			 */
-		//			currentSource = env.addSource(placeBuffer);
-		//
-		//			// Now we spread the sounds throughout the sound room.
-		//			currentSource.setPosition(0, 0, 0);
-		//
-		//			// and change the pitch of the second lake.
-		//			currentSource.setPitch(1.1f);
-		//
-		//			/*
-		//			 * These sounds are perceived from the perspective of a virtual
-		//			 * listener. Initially the position of this listener is 0,0,0. The
-		//			 * position and the orientation of the virtual listener can be
-		//			 * adjusted via the SoundEnv class.
-		//			 */
-		//			this.env.setListenerOrientation(20);
-		//
-		//
-		//
-		//
-		//		} catch (Exception e) {
-		//			e.printStackTrace();
-		//		}
-
 
 	}
 
@@ -127,7 +84,6 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 //				null);
 		
 		//ESCRIBIR EL AUDIO
-		String result = "";
 		File file = Environment.getExternalStorageDirectory();	
 		String externalStoragePath = file.getAbsolutePath();
 		HashMap<String, String> myHashRender = new HashMap<String,String>();
@@ -142,11 +98,16 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 				String fileName = p.getName()+".wav";
 				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
 				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
-				tts.synthesizeToFile(result, myHashRender, destinationPath);
+				tts.synthesizeToFile(p.GetSpeakedString(), myHashRender, destinationPath);
+				p.setAudioFilePath(appTmpPath.getAbsolutePath() + "/");
 				myHashRender.clear();
+				p.addBufferAndSource(env);
+				p.calculateSoundPosition(userLocation);
+				
 			}
 			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 			//Utils.SpeakText(tts, result);
+			readTextWithOpen4Al();
 		} 
 		catch (Exception e1) 
 		{
@@ -159,6 +120,47 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		
 
 	}
+
+//				try {
+//		
+//					/* First we obtain the instance of the sound environment. */
+//					/*
+//					 * Now we load the sounds into the memory that we want to play
+//					 * later. Each sound has to be buffered once only. To add new sound
+//					 * copy them into the assets folder of the Android project.
+//					 * Currently only mono .wav files are supported.
+//					 */
+//					//	Buffer placeBuffer = env.addBuffer(currentFileName);
+//		
+//					/*
+//					 * To actually play a sound and place it somewhere in the sound
+//					 * environment, we have to create sources. Each source has its own
+//					 * parameters, such as 3D position or pitch. Several sources can
+//					 * share a single buffer.
+//					 */
+//		
+//					// Now we spread the sounds throughout the sound room.
+//					currentSource.setPosition(0, 0, 0);
+//		
+//					// and change the pitch of the second lake.
+//					currentSource.setPitch(1.1f);
+//		
+//					/*
+//					 * These sounds are perceived from the perspective of a virtual
+//					 * listener. Initially the position of this listener is 0,0,0. The
+//					 * position and the orientation of the virtual listener can be
+//					 * adjusted via the SoundEnv class.
+//					 */
+//					this.env.setListenerOrientation(20);
+//		
+//		
+//		
+//		
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+
+
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
