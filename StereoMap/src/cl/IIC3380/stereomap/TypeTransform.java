@@ -140,6 +140,6 @@ public class TypeTransform {
 	}
 	
 	public String Transform(String typeToTransform){	
-		return typesHash.get(typeToTransform);
+		return typesHash.get(typeToTransform) + " ";
 	}
 }

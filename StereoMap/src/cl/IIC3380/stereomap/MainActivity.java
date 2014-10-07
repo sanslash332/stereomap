@@ -1,5 +1,7 @@
 package cl.IIC3380.stereomap;
 
+import java.util.concurrent.ExecutionException;
+
 import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
 import org.pielot.openal.Source;
@@ -30,8 +32,17 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		PlacesManager pm = new PlacesManager();
+		try {
+			pm.parsePlaces("500", "-33.8670522,151.1957362");
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Log.i(TAG, "onCreate()");
-
 		this.setContentView(R.layout.main);
 
 		try {
