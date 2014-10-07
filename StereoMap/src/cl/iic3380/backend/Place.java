@@ -1,4 +1,4 @@
-package cl.IIC3380.stereomap;
+package cl.iic3380.backend;
 
 import java.util.List;
 
@@ -12,4 +12,17 @@ public class Place {
 		this.name = name;
 		this.types = Types;
 	}
+	public double getLatitud() {
+		return latitud;
+	}
+	public double getLongitud() {
+		return longitud;
+	}
+	public String getName() {
+		return name;
+	}
+	public List<String> getTypes() {
+		return types;
+	}
+	
 }

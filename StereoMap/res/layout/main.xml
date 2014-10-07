@@ -5,29 +5,31 @@
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/textView1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:maxLines="20"
+        android:scrollbars="vertical" />
 
     <SeekBar
         android:id="@+id/sliderX"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:progress="25"
-        android:max="50"/>
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="25" />
 
     <SeekBar
         android:id="@+id/sliderY"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:progress="25"
-        android:max="50" />
+        android:max="50"
+        android:progress="25" />
 
     <SeekBar
         android:id="@+id/sliderZ"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:progress="25"
-        android:max="50" />
+        android:max="50"
+        android:progress="25" />
 
 </LinearLayout>

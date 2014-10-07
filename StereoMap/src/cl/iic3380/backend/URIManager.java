@@ -1,4 +1,4 @@
-package cl.IIC3380.stereomap;
+package cl.iic3380.backend;
 
 public class URIManager {
 	

@@ -1,4 +1,4 @@
-package cl.IIC3380.stereomap;
+package cl.iic3380.backend;
 
 import java.util.HashMap;
 
@@ -107,10 +107,10 @@ public class TypeTransform {
 		typesHash.put("university", "Universidad");
 		typesHash.put("veterinary_care", "Veterinario");
 		typesHash.put("zoo", "Zoologico");
-		typesHash.put("administrative_area_level_1", "√Årea administrativa nivel 1");
-		typesHash.put("administrative_area_level_2", "√Årea administrativa nivel 2");
-		typesHash.put("administrative_area_level_3", "√Årea administrativa nivel 3");
-		typesHash.put("colloquial_area", "√Årea coloquial");
+		typesHash.put("administrative_area_level_1", "√?rea administrativa nivel 1");
+		typesHash.put("administrative_area_level_2", "√?rea administrativa nivel 2");
+		typesHash.put("administrative_area_level_3", "√?rea administrativa nivel 3");
+		typesHash.put("colloquial_area", "√?rea coloquial");
 		typesHash.put("country", "Pa√≠s");
 		typesHash.put("floor", "Piso");
 		typesHash.put("geocode", "C√≥digo geogr√°fico");

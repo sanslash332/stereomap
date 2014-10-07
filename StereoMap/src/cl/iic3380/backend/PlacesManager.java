@@ -1,5 +1,5 @@
 
-package cl.IIC3380.stereomap;
+package cl.iic3380.backend;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,26 +12,36 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.Location;
+
 public class PlacesManager {
-	URIManager mUriManager;
-	List<Place> searchedPlaces;
-	TypeTransform typeTransformer;
-	public PlacesManager(){
+	
+	private URIManager mUriManager;
+	private List<Place> searchedPlaces;
+	private TypeTransform typeTransformer;
+	
+	public PlacesManager()
+	{
 		mUriManager = new URIManager();
 		searchedPlaces = new ArrayList<Place>();
 		typeTransformer = new TypeTransform();
 	}
-	public List<Place> parsePlaces(String radius, String location) throws InterruptedException, ExecutionException{
+	
+	public List<Place> parsePlaces(String radius, Location location) throws InterruptedException, ExecutionException
+	{
+		String position = location.getLatitude()+","+location.getLongitude();
 		searchedPlaces.clear();
-		String JSON = new HttpRequest().execute(mUriManager.createURI(radius, location)).get();
-		try {
+		String JSON = new HttpRequest().execute(mUriManager.createURI(radius, position)).get();
+		try 
+		{
 			JSONParsing(JSON);
-		} catch (JSONException e) {
+		} catch (JSONException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return searchedPlaces;
-		
+
 	}
 	private void JSONParsing(String JSON) throws JSONException{
 		JSONObject returnedJSON = new JSONObject(JSON);
@@ -40,16 +50,17 @@ public class PlacesManager {
 		List<String> types = null;
 		double lat = 0;
 		double lng = 0;
-		for (int i = 0; i < results.length(); i++){
+		for (int i = 0; i < results.length(); i++)
+		{
 			JSONObject particularResult = results.getJSONObject(i);
 			name = particularResult.getString("name");
-			lat = particularResult.getJSONObject("location").getDouble("lat");
-			lng = particularResult.getJSONObject("location").getDouble("lng");
+			lat = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+			lng = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
 			types = getStringArrayFromJSONArray(particularResult.getJSONArray("types"));
 			Place newPlace = new Place(lat, lng, name, types);
 			searchedPlaces.add(newPlace);
 		}
-		
+
 
 	}
 	private List<String> getStringArrayFromJSONArray(JSONArray jsonArray) throws JSONException {
