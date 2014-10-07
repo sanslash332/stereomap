@@ -2,6 +2,7 @@ package cl.iic3380.backend;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 import org.pielot.openal.Buffer;
 import org.pielot.openal.SoundEnv;
@@ -62,6 +63,18 @@ public class Place {
 	}
 	public void calculateSoundPosition(Location userLocation) {
 		//TODO crear algoritmo para calcular la posicion en la que se tiene que escuchar el sonido
+		//latitude norte-sur
+		//longitude este-oeste
+		double latitudeDifference = userLocation.getLatitude()-latitud;
+		double longitudeDifference = userLocation.getLongitude()-longitud;
+		double magnitude = Math.sqrt(Math.pow(latitudeDifference, 2)+Math.pow(longitudeDifference, 2));
+		latitudeDifference /= magnitude;
+		longitudeDifference /= magnitude;
+		
+		float newLatitude = (float)latitudeDifference*10;
+		float newLongitude = (float)longitudeDifference*10;
+		
+		currentSource.setPosition(newLatitude, newLongitude, 0);
 	}
 
 }
