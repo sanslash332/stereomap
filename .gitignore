@@ -24,3 +24,6 @@ proguard/
 
 # Log Files
 *.log
+
+# user configuration files from vs:
+*.suo

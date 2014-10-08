@@ -1,0 +1,77 @@
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\TinyCLR_DebugReferences.cache
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity_senzor_4._2.Resources.resources
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.csproj.GenerateResource.Cache
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity_senzor_4._2.Resources.tinyresources
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\TinyResGen.cache
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.exe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.exe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\proximity senzor 4.2.exe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\proximity senzor 4.2.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHIElectronics.Gadgeteer.FEZCerberus.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.DistanceUS3.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHI.OSHW.Hardware.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHIElectronics.Gadgeteer.FEZCerberus.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.DistanceUS3.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHI.OSHW.Hardware.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHIElectronics.Gadgeteer.FEZCerberus.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.DistanceUS3.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHI.OSHW.Hardware.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHIElectronics.Gadgeteer.FEZCerberus.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.DistanceUS3.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHI.OSHW.Hardware.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHI.OSHW.Hardware.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHI.OSHW.Hardware.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\be\proximity senzor 4.2.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\be\proximity senzor 4.2.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\le\proximity senzor 4.2.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\le\proximity senzor 4.2.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.exe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.pdb
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Tunes.pe
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Tunes.pe
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Tunes.pdbx
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Tunes.pdbx
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.dll
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.pdb
+D:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.csprojResolveAssemblyReference.cache
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.Serial.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Bluetooth.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.Serial.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Bluetooth.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.Serial.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Bluetooth.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.Serial.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Bluetooth.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.xml
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Button.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Button.pe
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Button.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Button.pdbx
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.dll
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.pdb
+d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.xml
