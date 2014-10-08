@@ -12,7 +12,7 @@ import cl.iic3380.utils.Utils;
 
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -25,7 +25,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity implements OnInitListener {
+public class MainActivity extends Activity implements OnInitListener {
 
 	private LocationManager locationManager;
 	private MyLocationListener locationListener;
@@ -108,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 			}
 			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 			//Utils.SpeakText(tts, result);
-			readTextWithOpen4Al();
+			//readTextWithOpen4Al();
 		} 
 		catch (Exception e1) 
 		{
