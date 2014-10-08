@@ -23,21 +23,7 @@ public class MyLocationListener implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-
-		String s = "";
-		List<Place> places;
-		try 
-		{
-			places = placesManager.parsePlaces(radius, location);
-			for(Place p : places)
-			{
-				s+="Name: "+p.getName()+" - Type: "+p.getTypes().toString()+"\n";
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		textView.setText(s);
+		placesManager.setUserLocation(location);
 
 	}
 

@@ -19,7 +19,10 @@ public class PlacesManager {
 	private URIManager mUriManager;
 	private List<Place> searchedPlaces;
 	private TypeTransform typeTransformer;
+	private Location userLocation;
 	
+
+
 	public PlacesManager()
 	{
 		mUriManager = new URIManager();
@@ -71,6 +74,13 @@ public class PlacesManager {
 		return convertedArray;
 	}
 
+	public Location getUserLocation() {
+		return userLocation;
+	}
+
+	public void setUserLocation(Location userLocation) {
+		this.userLocation = userLocation;
+	}
 }
 
 

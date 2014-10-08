@@ -1,5 +1,8 @@
 package cl.iic3380.backend;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -9,14 +12,16 @@ import org.pielot.openal.SoundEnv;
 import org.pielot.openal.Source;
 
 import android.location.Location;
+import android.media.MediaPlayer;
 
-public class Place {
+public class Place extends Thread{
 	private double latitud, longitud;
 	private String name;
 	private List<String> types;		
 	private String audioFilePath;
 	private Buffer buffer;
 	private Source currentSource;
+	private String totalFilePath;
 	
 	public Place(double lat, double lng, String name, List<String> Types){
 		this.latitud = lat;
@@ -30,7 +35,7 @@ public class Place {
 	public double getLongitud() {
 		return longitud;
 	}
-	public String getName() {
+	public String getPlaceName() {
 		return name;
 	}
 	public List<String> getTypes() {
@@ -54,7 +59,7 @@ public class Place {
 	}
 	public void addBufferAndSource(SoundEnv env) {
 		try {
-			String totalFilePath = audioFilePath+name.split(" ")[0]+".wav";
+			totalFilePath = audioFilePath+name.split(" ")[0]+".wav";
 			this.buffer = env.addBuffer(name, totalFilePath);
 			this.currentSource = env.addSource(buffer);
 			currentSource.setPosition(0, 0, 0);
@@ -74,8 +79,8 @@ public class Place {
 		latitudeDifference /= magnitude;
 		longitudeDifference /= magnitude;
 		
-		float newLatitude = (float)latitudeDifference*10;
-		float newLongitude = (float)longitudeDifference*10;
+		float newLatitude = (float)latitudeDifference*20;
+		float newLongitude = (float)longitudeDifference*20;
 		
 		currentSource.setPosition(newLatitude, newLongitude, 0);
 	}
@@ -84,6 +89,12 @@ public class Place {
 	}
 	public Source getCurrentSource() {
 		return currentSource;
+	}
+	
+	@Override
+	public void run()
+	{
+		currentSource.play(false);
 	}
 	
 

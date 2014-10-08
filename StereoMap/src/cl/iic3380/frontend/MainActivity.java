@@ -2,6 +2,8 @@ package cl.iic3380.frontend;
 
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -63,7 +66,21 @@ public class MainActivity extends Activity implements OnInitListener {
 		TextView tv = (TextView)findViewById(R.id.textView1);
 		placesManager = new PlacesManager();
 		locationListener = new MyLocationListener(placesManager,tv,radius);
-		locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
+
+
+
+		/**
+		 * ACA VA EL HARDCODEO DEL PROVIDER
+		 */
+		//bestProvider=LocationManager.GPS_PROVIDER;
+		/**
+		 * ACA TERMINA
+		 */
+
+		placesManager.setUserLocation(locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER));
+
+		locationManager.requestSingleUpdate(bestProvider, locationListener, this.getMainLooper());
+
 
 		// Fire off an intent to check if a TTS engine is installed
 		Intent checkIntent = new Intent();
@@ -81,6 +98,13 @@ public class MainActivity extends Activity implements OnInitListener {
 		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
 		//				null);
 
+
+		while(true)
+		{
+			if(placesManager.getUserLocation()!=null)
+				break;
+		}
+
 		//ESCRIBIR EL AUDIO
 		File file = Environment.getExternalStorageDirectory();	
 		String externalStoragePath = file.getAbsolutePath();
@@ -94,23 +118,36 @@ public class MainActivity extends Activity implements OnInitListener {
 			appTmpPath.mkdirs();
 			for(Place p : places)
 			{
-				String fileName = p.getName().split(" ")[0]+".wav";
+				String fileName = p.getPlaceName().split(" ")[0]+".wav";
 				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
 				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
 				tts.synthesizeToFile(p.GetSpeakedString(), myHashRender, destinationPath);
 				p.setAudioFilePath(appTmpPath.getAbsolutePath() + "/");
-				myHashRender.clear();			
-			}
-			for(Place p : places)
-			{
+				myHashRender.clear();	
+
+				while(tts.isSpeaking()){}
+
 				p.addBufferAndSource(env);
 				p.calculateSoundPosition(userLocation);
+				
+				p.start();
+				p.sleep(getDuration(new File(destinationPath)));
+
+
+
+
 			}
+
+			//			for(Place p : places)
+			//			{
+			//				p.addBufferAndSource(env);
+			//				p.calculateSoundPosition(userLocation);
+			//			}
 			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 			//Utils.SpeakText(tts, result);
 			//readTextWithOpen4Al();
 		} 
-		catch (Exception e1) 
+		catch (Exception e1)
 		{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -164,13 +201,17 @@ public class MainActivity extends Activity implements OnInitListener {
 
 
 	private void readTextWithOpen4Al() {
-		this.env.setListenerOrientation(0);
-		places.get(0).getCurrentSource().play(true);
-//				for(Place p : places){
-//					p.getCurrentSource().play(false);
-//				}
-	}
+		for(Place p : places){
+			p.start();
 
+			try 
+			{
+				p.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -225,14 +266,14 @@ public class MainActivity extends Activity implements OnInitListener {
 	//		this.park1.play(true);
 	//	}
 	//
-//		@Override
-//		public void onPause() {
-//			super.onPause();
-//	
-//			// Stop all sounds
-//			this.env.stopAllSources();
-//	
-//		}
+	//		@Override
+	//		public void onPause() {
+	//			super.onPause();
+	//	
+	//			// Stop all sounds
+	//			this.env.stopAllSources();
+	//	
+	//		}
 	//
 	//	@Override
 	//	public void onDestroy() {
@@ -266,4 +307,25 @@ public class MainActivity extends Activity implements OnInitListener {
 	//		this.park1.setPosition(lastPositionX, lastPositionY, currentPos-delta);
 	//		lastPositionZ=currentPos-delta;
 	//	}
+
+	private int getDuration(File file)
+	{
+		int length = -1;
+		try
+		{
+			MediaPlayer mp = new MediaPlayer();
+			FileInputStream fs = new FileInputStream(file);
+			FileDescriptor fd = fs.getFD();
+			mp.setDataSource(fd);
+			mp.prepare();
+			length = mp.getDuration();
+			mp.release();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return length;
+
+	}
 }
