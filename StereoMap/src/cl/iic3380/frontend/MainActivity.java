@@ -32,9 +32,9 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	private String bestProvider;
 	private PlacesManager placesManager;
 	private String radius;
-	
+
 	private SoundEnv env;
-	
+
 	private String currentFileName;
 	private String[] synthResult;
 	private List<Place> places;
@@ -52,8 +52,6 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
-		this.env = SoundEnv.getInstance(this);
-
 		//Localizaci�n
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -66,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		placesManager = new PlacesManager();
 		locationListener = new MyLocationListener(placesManager,tv,radius);
 		locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener);
-		
+
 		// Fire off an intent to check if a TTS engine is installed
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -79,31 +77,34 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 
 	@Override
 	public void onInit(int status) {
-//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
-//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
-//				null);
-		
+		//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
+		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
+		//				null);
+
 		//ESCRIBIR EL AUDIO
 		File file = Environment.getExternalStorageDirectory();	
 		String externalStoragePath = file.getAbsolutePath();
 		HashMap<String, String> myHashRender = new HashMap<String,String>();
 		try 
 		{
+			this.env = SoundEnv.getInstance(this);
 			Location userLocation = locationManager.getLastKnownLocation(bestProvider);
 			places = placesManager.parsePlaces(radius, userLocation);
 			File appTmpPath = new File(externalStoragePath + "/sounds/");
 			appTmpPath.mkdirs();
 			for(Place p : places)
 			{
-				String fileName = p.getName()+".wav";
+				String fileName = p.getName().split(" ")[0]+".wav";
 				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
 				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
 				tts.synthesizeToFile(p.GetSpeakedString(), myHashRender, destinationPath);
 				p.setAudioFilePath(appTmpPath.getAbsolutePath() + "/");
-				myHashRender.clear();
+				myHashRender.clear();			
+			}
+			for(Place p : places)
+			{
 				p.addBufferAndSource(env);
 				p.calculateSoundPosition(userLocation);
-				
 			}
 			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 			//Utils.SpeakText(tts, result);
@@ -114,51 +115,61 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
+
+
 		//synthResult = ttsSynth.speakText(result);
-		
+
 
 	}
 
-//				try {
-//		
-//					/* First we obtain the instance of the sound environment. */
-//					/*
-//					 * Now we load the sounds into the memory that we want to play
-//					 * later. Each sound has to be buffered once only. To add new sound
-//					 * copy them into the assets folder of the Android project.
-//					 * Currently only mono .wav files are supported.
-//					 */
-//					//	Buffer placeBuffer = env.addBuffer(currentFileName);
-//		
-//					/*
-//					 * To actually play a sound and place it somewhere in the sound
-//					 * environment, we have to create sources. Each source has its own
-//					 * parameters, such as 3D position or pitch. Several sources can
-//					 * share a single buffer.
-//					 */
-//		
-//					// Now we spread the sounds throughout the sound room.
-//					currentSource.setPosition(0, 0, 0);
-//		
-//					// and change the pitch of the second lake.
-//					currentSource.setPitch(1.1f);
-//		
-//					/*
-//					 * These sounds are perceived from the perspective of a virtual
-//					 * listener. Initially the position of this listener is 0,0,0. The
-//					 * position and the orientation of the virtual listener can be
-//					 * adjusted via the SoundEnv class.
-//					 */
-//					this.env.setListenerOrientation(20);
-//		
-//		
-//		
-//		
-//				} catch (Exception e) {
-//					e.printStackTrace();
+	//				try {
+	//		
+	//					/* First we obtain the instance of the sound environment. */
+	//					/*
+	//					 * Now we load the sounds into the memory that we want to play
+	//					 * later. Each sound has to be buffered once only. To add new sound
+	//					 * copy them into the assets folder of the Android project.
+	//					 * Currently only mono .wav files are supported.
+	//					 */
+	//					//	Buffer placeBuffer = env.addBuffer(currentFileName);
+	//		
+	//					/*
+	//					 * To actually play a sound and place it somewhere in the sound
+	//					 * environment, we have to create sources. Each source has its own
+	//					 * parameters, such as 3D position or pitch. Several sources can
+	//					 * share a single buffer.
+	//					 */
+	//		
+	//					// Now we spread the sounds throughout the sound room.
+	//					currentSource.setPosition(0, 0, 0);
+	//		
+	//					// and change the pitch of the second lake.
+	//					currentSource.setPitch(1.1f);
+	//		
+	//					/*
+	//					 * These sounds are perceived from the perspective of a virtual
+	//					 * listener. Initially the position of this listener is 0,0,0. The
+	//					 * position and the orientation of the virtual listener can be
+	//					 * adjusted via the SoundEnv class.
+	//					 */
+	//					
+	//		
+	//		
+	//		
+	//		
+	//				} catch (Exception e) {
+	//					e.printStackTrace();
+	//				}
+
+
+
+	private void readTextWithOpen4Al() {
+		this.env.setListenerOrientation(0);
+		places.get(0).getCurrentSource().play(true);
+//				for(Place p : places){
+//					p.getCurrentSource().play(false);
 //				}
+	}
 
 
 
@@ -199,7 +210,6 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		super.onDestroy();
 	}
 
-
 	//	LIBRER�A
 	//	@Override
 	//	public void onResume() {
@@ -215,17 +225,14 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 	//		this.park1.play(true);
 	//	}
 	//
-	//	@Override
-	//	public void onPause() {
-	//		super.onPause();
-	//		Log.i(TAG, "onPause()");
-	//
-	//		// Stop all sounds
-	//		this.lake1.stop();
-	//		this.lake2.stop();
-	//		this.park1.stop();
-	//
-	//	}
+//		@Override
+//		public void onPause() {
+//			super.onPause();
+//	
+//			// Stop all sounds
+//			this.env.stopAllSources();
+//	
+//		}
 	//
 	//	@Override
 	//	public void onDestroy() {

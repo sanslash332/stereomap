@@ -53,8 +53,11 @@ public class Place {
 	}
 	public void addBufferAndSource(SoundEnv env) {
 		try {
-			this.buffer = env.addBuffer(audioFilePath, name);
+			String totalFilePath = audioFilePath+name.split(" ")[0]+".wav";
+			this.buffer = env.addBuffer(name, totalFilePath);
 			this.currentSource = env.addSource(buffer);
+			currentSource.setPosition(0, 0, 0);
+			currentSource.setPitch(1.1f);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,5 +66,12 @@ public class Place {
 	public void calculateSoundPosition(Location userLocation) {
 		//TODO crear algoritmo para calcular la posicion en la que se tiene que escuchar el sonido
 	}
+	public Buffer getBuffer() {
+		return buffer;
+	}
+	public Source getCurrentSource() {
+		return currentSource;
+	}
+	
 
 }
