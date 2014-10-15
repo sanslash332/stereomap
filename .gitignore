@@ -27,3 +27,4 @@ proguard/
 
 # user configuration files from vs:
 *.suo
+obj/debug/
