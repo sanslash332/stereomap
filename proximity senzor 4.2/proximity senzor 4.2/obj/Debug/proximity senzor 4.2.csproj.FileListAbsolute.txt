@@ -75,3 +75,86 @@ d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4
 d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.dll
 d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.pdb
 d:\Documents\Visual Studio 2012\Projects\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.csprojResolveAssemblyReference.cache
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\TinyCLR_DebugReferences.cache
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity_senzor_4._2.Resources.resources
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.csproj.GenerateResource.Cache
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity_senzor_4._2.Resources.tinyresources
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\TinyResGen.cache
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.exe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\proximity senzor 4.2.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.exe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.exe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\proximity senzor 4.2.exe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\proximity senzor 4.2.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\le\proximity senzor 4.2.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\be\proximity senzor 4.2.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.Serial.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHIElectronics.Gadgeteer.FEZCerberus.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Bluetooth.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Button.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.DistanceUS3.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Tunes.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.Seeed.Compass.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHI.OSHW.Hardware.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.Serial.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHIElectronics.Gadgeteer.FEZCerberus.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Bluetooth.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Button.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.DistanceUS3.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Tunes.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.Seeed.Compass.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHI.OSHW.Hardware.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\Gadgeteer.Serial.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHIElectronics.Gadgeteer.FEZCerberus.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Bluetooth.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Button.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.DistanceUS3.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.GHIElectronics.Tunes.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GTM.Seeed.Compass.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\LE\GHI.OSHW.Hardware.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\Gadgeteer.Serial.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHIElectronics.Gadgeteer.FEZCerberus.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Bluetooth.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Button.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.DistanceUS3.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.GHIElectronics.Tunes.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GTM.Seeed.Compass.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\BE\GHI.OSHW.Hardware.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.Seeed.Compass.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHI.OSHW.Hardware.dll
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\Gadgeteer.Serial.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHIElectronics.Gadgeteer.FEZCerberus.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Bluetooth.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Button.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.DistanceUS3.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.GHIElectronics.Tunes.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GTM.Seeed.Compass.pdb
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\bin\Debug\GHI.OSHW.Hardware.xml
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\be\proximity senzor 4.2.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\be\proximity senzor 4.2.pdbx
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\le\proximity senzor 4.2.pe
+D:\programación\android\stereomap\proximity senzor 4.2\proximity senzor 4.2\obj\Debug\le\proximity senzor 4.2.pdbx

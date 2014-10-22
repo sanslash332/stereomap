@@ -12,6 +12,7 @@ using Gadgeteer.Networking;
 using GT = Gadgeteer;
 using GTM = Gadgeteer.Modules;
 using Gadgeteer.Modules.GHIElectronics;
+using Gadgeteer.Modules.Seeed;
 
 namespace proximity_senzor_4._2
 {
@@ -48,7 +49,8 @@ namespace proximity_senzor_4._2
             Debug.Print("inicializando partes");
             mytimer = new GT.Timer(500);
             mytimer.Behavior = GT.Timer.BehaviorType.RunContinuously;
-
+            compass.StartContinuousMeasurements();
+            compass.MeasurementComplete += compass_MeasurementComplete;
             mytimer.Tick += timer_Tick;
             bt.SetDeviceName("StereomapJockey");
             bt.SetPinCode("0000");
@@ -76,6 +78,12 @@ namespace proximity_senzor_4._2
             mytimer.Start();
 
             
+        }
+
+        void compass_MeasurementComplete(Compass sender, Compass.SensorData sensorData)
+        {
+            int frec = (int)sensorData.Angle * 10+30;
+            tunes.Play(frec);
         }
 
         void pairModeButton_ButtonPressed(Button sender, Button.ButtonState state)

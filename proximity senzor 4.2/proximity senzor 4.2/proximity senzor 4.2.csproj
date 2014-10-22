@@ -72,6 +72,10 @@
     <Reference Include="GTM.GHIElectronics.Tunes, Version=4.2.106.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="GTM.Seeed.Compass, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Seeed\Microsoft .NET Gadgeteer\Modules\Compass\NETMF 4.2\GTM.Seeed.Compass.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SPOT.Graphics" />
     <Reference Include="Microsoft.SPOT.Hardware" />
     <Reference Include="Microsoft.SPOT.Native" />

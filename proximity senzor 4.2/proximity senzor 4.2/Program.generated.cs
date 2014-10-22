@@ -30,6 +30,9 @@ namespace proximity_senzor_4._2 {
         /// <summary>The Button module using socket 4 of the mainboard.</summary>
         private Gadgeteer.Modules.GHIElectronics.Button restButton;
         
+        /// <summary>The Compass module using socket 1 of the mainboard.</summary>
+        private Gadgeteer.Modules.Seeed.Compass compass;
+        
         /// <summary>This property provides access to the Mainboard API. This is normally not necessary for an end user program.</summary>
         protected new static GHIElectronics.Gadgeteer.FEZCerberus Mainboard {
             get {
@@ -57,6 +60,7 @@ namespace proximity_senzor_4._2 {
             this.bt = new GTM.GHIElectronics.Bluetooth(2);
             this.pairModeButton = new GTM.GHIElectronics.Button(5);
             this.restButton = new GTM.GHIElectronics.Button(4);
+            this.compass = new GTM.Seeed.Compass(1);
         }
     }
 }
