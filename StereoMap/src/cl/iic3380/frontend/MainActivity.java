@@ -310,6 +310,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 	private int getDuration(File file)
 	{
+		//
 		int length = -1;
 		try
 		{
