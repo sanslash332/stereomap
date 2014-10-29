@@ -21,10 +21,10 @@ namespace proximity_senzor_4._2
         private GT.Timer mytimer;
         private Bluetooth.Client client;
         private bool conected;
-        private bool continuing = true;
+        private bool continuing = false;
         private int frames = 10;
-        
-
+        private bool debugMode=false;
+        private int currentCompass;
 
 
         // This method is run when the mainboard is powered up or reset.   
@@ -72,7 +72,7 @@ namespace proximity_senzor_4._2
 
             tunes.Play(musc);
             restButton.ButtonPressed += restButton_ButtonPressed;
-            restButton.TurnLEDOn();
+            restButton.TurnLEDOff();
             pairModeButton.ButtonPressed += pairModeButton_ButtonPressed;
             System.Threading.Thread.Sleep(2000);
             mytimer.Start();
@@ -82,12 +82,21 @@ namespace proximity_senzor_4._2
 
         void compass_MeasurementComplete(Compass sender, Compass.SensorData sensorData)
         {
-            int frec = (int)sensorData.Angle * 10+30;
-            tunes.Play(frec);
+            currentCompass= (int)sensorData.Angle;
+            int frec = currentCompass * 10 + 20;
+
+            if (debugMode)
+            {
+
+                tunes.Play(frec);
+            }
+
         }
 
         void pairModeButton_ButtonPressed(Button sender, Button.ButtonState state)
         {
+            client.Disconnect();
+
             client.EnterPairingMode();
             pairModeButton.TurnLEDOn();
             Tunes.Melody coin = new Tunes.Melody();
@@ -99,12 +108,31 @@ namespace proximity_senzor_4._2
 
         void restButton_ButtonPressed(Button sender, Button.ButtonState state)
         {
-            continuing = true;
-            frames += 10;
+            if (continuing)
+            {
+                debugMode = false;
+                continuing = false;
+                            tunes.AddNote(new Tunes.MusicNote(new Tunes.Tone(300), 500));
+            tunes.Play();
+
+                return;
+            }
+
             tunes.AddNote(new Tunes.MusicNote(new Tunes.Tone(3000), 500));
             tunes.Play();
 
-            sender.TurnLEDOn();
+            sender.ToggleLED();
+            if (!debugMode)
+            {
+                debugMode = true;
+
+            }
+            else
+            {
+                continuing=true;
+                debugMode=false;
+
+            }
 
         }
 
@@ -171,44 +199,48 @@ namespace proximity_senzor_4._2
 
         void timer_Tick(GT.Timer timer)
         {
-            if (!continuing)
-            {
-                
-                return;
-            }
-
+            
             //Debug.Print("Distancia a un objeto, con error "  + dist.SENSOR_ERROR);
             //Debug.Print("distancia: " + dist.GetDistanceInCentimeters().ToString());
-            frames=frames-1;
+            
             int currentDist = dist.GetDistanceInCentimeters();
-            client.Send(currentDist.ToString());
+
+            if (bt.IsConnected)
+            {
+
+                client.Send("distanse: " + currentDist.ToString() + ", angle: " + currentCompass.ToString());
+            }
+
+            
+            if(continuing)
+            {
             if (currentDist < 0)
             {
-                tunes.Stop();
+                    tunes.Stop();
+                
             }
                           else  if (currentDist <= 5)
                             {
-                tunes.Play(new Tunes.Tone(5000));
+                                    tunes.Play(new Tunes.Tone(5000));
+                                
+
             }
             else if (currentDist <= 10)
             {
-                tunes.Play(new Tunes.Tone(3000));
+                    tunes.Play(new Tunes.Tone(3000));
+                
             }
             else if (currentDist <= 20)
             {
-                tunes.Play(new Tunes.Tone(2000));
+                    tunes.Play(new Tunes.Tone(2000));
+                
             }
             else if (currentDist <= 45)
             {
-                tunes.Play(new Tunes.Tone(1000));
+                    tunes.Play(new Tunes.Tone(1000));
+                }
             }
-            if (frames == 0)
-            {
-                continuing = false;
-                tunes.Stop();
-                restButton.TurnLEDOff();
-            }
-
+            
         }
     }
 }
