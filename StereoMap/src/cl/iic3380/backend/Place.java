@@ -47,7 +47,7 @@ public class Place extends Thread{
 		String result = name;
 		for(String type : types)
 		{
-			result+="."+type;
+			result+=". "+type;
 		}
 		return result;
 	}

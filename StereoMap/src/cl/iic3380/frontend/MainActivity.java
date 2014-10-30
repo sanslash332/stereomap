@@ -6,6 +6,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.pielot.openal.SoundEnv;
 
@@ -25,10 +26,13 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.GestureDetector;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements OnInitListener {
+public class MainActivity extends Activity implements OnInitListener, OnGestureListener {
 
 	private LocationManager locationManager;
 	private MyLocationListener locationListener;
@@ -36,11 +40,13 @@ public class MainActivity extends Activity implements OnInitListener {
 	private PlacesManager placesManager;
 	private String radius;
 
+	private TextView tv;
+	
 	private SoundEnv env;
-
-	private String currentFileName;
-	private String[] synthResult;
+	
 	private List<Place> places;
+	
+	private GestureDetector gestureDetector;
 
 	private TextToSpeech tts;
 	// This code can be any value you want, its just a checksum.
@@ -55,6 +61,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
+		this.env = SoundEnv.getInstance(this);
+
 		//Localizaci�n
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -63,12 +71,14 @@ public class MainActivity extends Activity implements OnInitListener {
 
 		radius="500";
 
-		TextView tv = (TextView)findViewById(R.id.textView1);
-		placesManager = new PlacesManager();
+		//tv = (TextView)findViewById(R.id.textView1);
+		tv.setText(radius);
+		placesManager = new PlacesManager(env);
 		locationListener = new MyLocationListener(placesManager,tv,radius);
-
-
-
+		
+		//Detector de gestos
+		gestureDetector = new GestureDetector(this, this);
+		
 		/**
 		 * ACA VA EL HARDCODEO DEL PROVIDER
 		 */
@@ -91,7 +101,11 @@ public class MainActivity extends Activity implements OnInitListener {
 	}
 
 
-
+	@Override
+	public boolean onTouchEvent(MotionEvent event){
+		this.gestureDetector.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
 	@Override
 	public void onInit(int status) {
 		//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
@@ -104,115 +118,23 @@ public class MainActivity extends Activity implements OnInitListener {
 			if(placesManager.getUserLocation()!=null)
 				break;
 		}
+		
 
-		//ESCRIBIR EL AUDIO
-		File file = Environment.getExternalStorageDirectory();	
-		String externalStoragePath = file.getAbsolutePath();
-		HashMap<String, String> myHashRender = new HashMap<String,String>();
-		try 
-		{
-			this.env = SoundEnv.getInstance(this);
-			Location userLocation = locationManager.getLastKnownLocation(bestProvider);
+		Location userLocation = locationManager.getLastKnownLocation(bestProvider);
+		try {
 			places = placesManager.parsePlaces(radius, userLocation);
-			File appTmpPath = new File(externalStoragePath + "/sounds/");
-			appTmpPath.mkdirs();
-			for(Place p : places)
-			{
-				String fileName = p.getPlaceName().split(" ")[0]+".wav";
-				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
-				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
-				tts.synthesizeToFile(p.GetSpeakedString(), myHashRender, destinationPath);
-				p.setAudioFilePath(appTmpPath.getAbsolutePath() + "/");
-				myHashRender.clear();	
-
-				while(tts.isSpeaking()){}
-
-				p.addBufferAndSource(env);
-				p.calculateSoundPosition(userLocation);
-				
-				p.start();
-				p.sleep(getDuration(new File(destinationPath)));
-
-
-
-
-			}
-
-			//			for(Place p : places)
-			//			{
-			//				p.addBufferAndSource(env);
-			//				p.calculateSoundPosition(userLocation);
-			//			}
-			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
-			//Utils.SpeakText(tts, result);
-			//readTextWithOpen4Al();
-		} 
-		catch (Exception e1)
-		{
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		placesManager.start();
 
-
-		//synthResult = ttsSynth.speakText(result);
 
 
 	}
-
-	//				try {
-	//		
-	//					/* First we obtain the instance of the sound environment. */
-	//					/*
-	//					 * Now we load the sounds into the memory that we want to play
-	//					 * later. Each sound has to be buffered once only. To add new sound
-	//					 * copy them into the assets folder of the Android project.
-	//					 * Currently only mono .wav files are supported.
-	//					 */
-	//					//	Buffer placeBuffer = env.addBuffer(currentFileName);
-	//		
-	//					/*
-	//					 * To actually play a sound and place it somewhere in the sound
-	//					 * environment, we have to create sources. Each source has its own
-	//					 * parameters, such as 3D position or pitch. Several sources can
-	//					 * share a single buffer.
-	//					 */
-	//		
-	//					// Now we spread the sounds throughout the sound room.
-	//					currentSource.setPosition(0, 0, 0);
-	//		
-	//					// and change the pitch of the second lake.
-	//					currentSource.setPitch(1.1f);
-	//		
-	//					/*
-	//					 * These sounds are perceived from the perspective of a virtual
-	//					 * listener. Initially the position of this listener is 0,0,0. The
-	//					 * position and the orientation of the virtual listener can be
-	//					 * adjusted via the SoundEnv class.
-	//					 */
-	//					
-	//		
-	//		
-	//		
-	//		
-	//				} catch (Exception e) {
-	//					e.printStackTrace();
-	//				}
-
-
-
-	private void readTextWithOpen4Al() {
-		for(Place p : places){
-			p.start();
-
-			try 
-			{
-				p.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -223,6 +145,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			{
 				// success, create the TTS instance
 				tts = new TextToSpeech(this, this);
+				placesManager.setTTS(tts);
 			}
 			else
 			{
@@ -251,81 +174,67 @@ public class MainActivity extends Activity implements OnInitListener {
 		super.onDestroy();
 	}
 
-	//	LIBRER�A
-	//	@Override
-	//	public void onResume() {
-	//		super.onResume();
-	//		Log.i(TAG, "onResume()");
-	//
-	//		/*
-	//		 * Start playing all sources. 'true' as parameter specifies that the
-	//		 * sounds shall be played as a loop.
-	//		 */
-	//		//this.lake1.play(true);
-	//		//this.lake2.play(true);
-	//		this.park1.play(true);
-	//	}
-	//
-	//		@Override
-	//		public void onPause() {
-	//			super.onPause();
-	//	
-	//			// Stop all sounds
-	//			this.env.stopAllSources();
-	//	
-	//		}
-	//
-	//	@Override
-	//	public void onDestroy() {
-	//		super.onDestroy();
-	//		Log.i(TAG, "onDestroy()");
-	//
-	//		// Be nice with the system and release all resources
-	//		this.env.stopAllSources();
-	//		this.env.release();
-	//	}
-	//
-	//	@Override
-	//	public void onLowMemory() {
-	//		this.env.onLowMemory();
-	//	}
-	//
 
-
-	//	private void ChangeXPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(currentPos-delta, lastPositionY, lastPositionZ);
-	//		lastPositionX=currentPos-delta;
-	//	}
-	//	private void ChangeYPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(lastPositionX, currentPos-delta, lastPositionZ);
-	//		lastPositionY=currentPos-delta;
-	//	}
-	//	private void ChangeZPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(lastPositionX, lastPositionY, currentPos-delta);
-	//		lastPositionZ=currentPos-delta;
-	//	}
-
-	private int getDuration(File file)
-	{
-		int length = -1;
-		try
-		{
-			MediaPlayer mp = new MediaPlayer();
-			FileInputStream fs = new FileInputStream(file);
-			FileDescriptor fd = fs.getFD();
-			mp.setDataSource(fd);
-			mp.prepare();
-			length = mp.getDuration();
-			mp.release();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return length;
-
+	@Override
+	public boolean onDown(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		if(velocityX > 0 && Math.abs(velocityX) >= Math.abs(velocityY)) //Movimiento hacia la derecha
+		{
+			tv.setText("derecha");
+			return true;
+		}
+		else if (velocityX < 0 && Math.abs(velocityX) >= Math.abs(velocityY)) //Movimiento hacia la izquierda
+		{
+			tv.setText("izquierda");
+			return true;
+		}
+		else if (velocityY > 0 && Math.abs(velocityX) < Math.abs(velocityY)) //Movimiento hacia arriba
+		{
+			tv.setText("abajo");
+			return true;
+		}
+		else if (velocityY < 0 && Math.abs(velocityX) < Math.abs(velocityY)) //Movimiento hacia abajo
+		{
+			tv.setText("arriba");
+			return true;
+		}
+		return false;
+	}
+
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
