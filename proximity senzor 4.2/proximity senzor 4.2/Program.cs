@@ -25,6 +25,9 @@ namespace proximity_senzor_4._2
         private int frames = 10;
         private bool debugMode=false;
         private int currentCompass;
+        private int compassX;
+        private int compassY;
+        private int compassZ;
 
 
         // This method is run when the mainboard is powered up or reset.   
@@ -84,6 +87,9 @@ namespace proximity_senzor_4._2
         {
             currentCompass= (int)sensorData.Angle;
             int frec = currentCompass * 10 + 20;
+            compassX = sensorData.X;
+            compassY = sensorData.Y;
+            compassZ = sensorData.Z;
 
             if (debugMode)
             {
@@ -204,11 +210,12 @@ namespace proximity_senzor_4._2
             //Debug.Print("distancia: " + dist.GetDistanceInCentimeters().ToString());
             
             int currentDist = dist.GetDistanceInCentimeters();
-
+            
             if (bt.IsConnected)
             {
 
-                client.Send("distanse: " + currentDist.ToString() + ", angle: " + currentCompass.ToString());
+                client.Send("distance: " + currentDist.ToString() + ", angle: " + currentCompass.ToString() + ", x: " + compassX.ToString() + ", y: " + compassY.ToString() + ", z: " + compassZ.ToString());
+
             }
 
             
