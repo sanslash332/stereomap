@@ -11,8 +11,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import cl.iic3380.frontend.Debug;
-
 import android.os.AsyncTask;
 
 public class HttpRequest extends AsyncTask<String, Void, String>{

@@ -1,5 +1,6 @@
 package cl.iic3380.frontend;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -25,6 +26,8 @@ import android.util.Log;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.GestureDetector;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -34,19 +37,14 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private MyLocationListener locationListener;
 	private String bestProvider;
 	private PlacesManager placesManager;
-	private String radius;
-
-	private TextView tv;
-	
-	private SoundEnv env;
-	
 	private List<Place> places;
-	
+	private Location userLocation;
+	private TextView tv;
+	private SoundEnv env;
 	private GestureDetector gestureDetector;
-
 	private TextToSpeech tts;
-	// This code can be any value you want, its just a checksum.
-	private static final int MY_DATA_CHECK_CODE = 1234;
+	private static final String RADIUS="500";
+	private static final int MY_DATA_CHECK_CODE=1234;
 
 	/*
 	 * Codigo de respaldo librerï¿½a OPENAL
@@ -58,38 +56,39 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
 		this.env = SoundEnv.getInstance(this);
-
-		//Localizaciï¿½n
-		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		//Sacar mejor provider y location
-		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);
-		bestProvider = LocationManager.PASSIVE_PROVIDER;
-
-		radius="500";
-
-		tv = (TextView)findViewById(R.id.textView1);
-		tv.setText(radius);
-		placesManager = new PlacesManager(env);
-		locationListener = new MyLocationListener(placesManager,tv,radius);
 		
+		//Primero sacamos una localizacion que siempre devuelva algo
+		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		userLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		//Luego cambiamos al bestProvider
+		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);
 		//Detector de gestos
 		gestureDetector = new GestureDetector(this, this);
 		
-		/**
-		 * ACA VA EL HARDCODEO DEL PROVIDER
-		 */
-		//bestProvider=LocationManager.GPS_PROVIDER;
-		/**
-		 * ACA TERMINA
-		 */
-
-		placesManager.setUserLocation(locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER));
-
+		//Definimos los places y el placesManager
+		places = new ArrayList<Place>();
+		placesManager = new PlacesManager(places,this);
+		placesManager.setUserLocation(userLocation);
+		
+		
+//		while(true)
+//		{
+//			if(placesManager.getUserLocation()!=null)
+//				break;
+//		}
+		
+		//No se si esto va
+		tv = (TextView)findViewById(R.id.textView1);
+		tv.setText(RADIUS);
+		//Definimos el Location Listener
+		locationListener = new MyLocationListener(placesManager,tv,RADIUS);
+	
+		//Definimos la posición y todos los updates necesarios
+		placesManager.setUserLocation(userLocation);
 		locationManager.requestSingleUpdate(bestProvider, locationListener, this.getMainLooper());
 
 
-		// Fire off an intent to check if a TTS engine is installed
+		// Vemos si el TTs esta instalado
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
@@ -109,17 +108,11 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
 		//				null);
 
-
-		while(true)
-		{
-			if(placesManager.getUserLocation()!=null)
-				break;
-		}
+		//Luego de verificar el TTS hacemos el Parse de Places
 		
-
-		Location userLocation = locationManager.getLastKnownLocation(bestProvider);
-		try {
-			places = placesManager.parsePlaces(radius, userLocation);
+		try 
+		{
+			places = placesManager.ParsePlaces(RADIUS, userLocation);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -128,6 +121,36 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			e.printStackTrace();
 		}
 		placesManager.start();
+		
+		/*
+		 * PRUEBAS
+		 */
+		
+		Button b1 = (Button)findViewById(R.id.button1);
+		
+		b1.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+		    	TextView t2 = (TextView)findViewById(R.id.textView2);
+		    	t2.setText("");
+		        for(Place p : places)
+		        {
+		        	if(p.IsPlayable())
+		        	{
+		        		t2.append(p.toString());
+		        	}
+		        }
+		    }
+		});
+		
+//		for(Place p : searchedPlaces)
+//		{
+//			p.addBufferAndSource(env);
+//			p.calculateSoundPosition(userLocation);
+//			p.start();
+//			Thread.sleep(Utils.GetDuration(new File(p.getAudioFilePath() + p.getPlaceName().split(" ")[0] + ".wav")));
+//			p.join();
+//		}
 
 
 
