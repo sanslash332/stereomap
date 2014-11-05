@@ -2,10 +2,14 @@ package cl.iic3380.backend;
 
 import android.bluetooth.*;
 import android.content.Intent;
+
+import java.io.IOException;
 import java.lang.Object;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -13,7 +17,9 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.ParcelUuid;
 import android.sax.StartElementListener;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.widget.Adapter;
 
@@ -70,13 +76,29 @@ public class Bluetooth {
 	
 	public void pair(){
 		 BluetoothDevice device = adapter.getRemoteDevice("00:18:a1:12:0d:32");
-	        BluetoothSocket tmp = null;
-	        BluetoothSocket mmSocket = null;
+		 
+	     BluetoothSocket tmp = null;
+	     BluetoothSocket mmSocket = null;
 
 	        // Get a BluetoothSocket for a connection with the
 	        // given BluetoothDevice
-	        
-	 
+	     //Obtener UUID del telefono
+	     
+	     Method getUuidsMethod = BluetoothAdapter.class.getDeclaredMethod("getUuids", null);
+	     ParcelUuid[] uuids = (ParcelUuid[]) getUuidsMethod.invoke(adapter, null);
+	     UUID my_uuid = uuids[0].getUuid();
+	     for (ParcelUuid uuid: uuids) {
+	    	    Log.d("TAG", "UUID: " + uuid.getUuid().toString());
+	    	}
+	     
+	        try {
+	            tmp = device.createRfcommSocketToServiceRecord(my_uuid);
+	            Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+	            tmp = (BluetoothSocket) m.invoke(device, 1);
+	        } catch (IOException e) {
+	            
+	        }
+	        mmSocket = tmp;
 	}
 	
 
