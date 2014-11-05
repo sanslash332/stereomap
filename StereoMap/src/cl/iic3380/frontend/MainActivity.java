@@ -29,6 +29,7 @@ import android.view.GestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity implements OnInitListener, OnGestureListener {
@@ -45,6 +46,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private TextToSpeech tts;
 	private static final String RADIUS="500";
 	private static final int MY_DATA_CHECK_CODE=1234;
+	private Bluetooth bt = new Bluetooth();
 
 	/*
 	 * Codigo de respaldo librer�a OPENAL
@@ -92,6 +94,20 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+		
+		
+		//Bluetooth
+		//Pedir encenderlo
+		if (!bt.get_adapter().isEnabled()) {
+		    Intent enableBtIntent = new Intent(bt.get_adapter().ACTION_REQUEST_ENABLE);
+		    startActivityForResult(enableBtIntent, 1);
+		}
+		
+		//Mostrar paired
+		List <String> bt_pairs = bt.get_paired();
+
+		Toast toast = Toast.makeText(getApplicationContext(), bt_pairs.get(0), Toast.LENGTH_LONG);
+		toast.show();
 
 
 	}
