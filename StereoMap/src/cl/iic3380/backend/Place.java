@@ -46,6 +46,7 @@ public class Place extends Thread
 		currentSource.play(false);
 	}
 	
+	
 	public String GetSpeakedString()
 	{
 		String result = name;
@@ -103,6 +104,11 @@ public class Place extends Thread
 			return true;
 		else
 			return false;
+	}
+	
+	public void StopPlaying()
+	{
+		currentSource.stop();
 	}
 	
 	@Override

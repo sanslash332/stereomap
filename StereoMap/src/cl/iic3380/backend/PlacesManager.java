@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.pielot.openal.SoundEnv;
 
 import android.content.Context;
 import android.location.Location;
@@ -18,18 +19,21 @@ import android.speech.tts.TextToSpeech;
 
 public class PlacesManager extends Thread
 {
-	
+
 	private URIManager mUriManager;
 	private List<Place> searchedPlaces;
 	private TypeTransform typeTransformer;
 	private Location userLocation;
 	private TextToSpeech tts;
 	private Context context;
-	
+	private int currentPosition;
+	private Place lastPlayed;
+	private SoundEnv soundEnvironment;
+	//private FileCreator fileCreator;
 
 	@Override
 	public void run(){
-		
+
 		//Sacamos la ruta para utilizar en el dispositivo
 		File file = Environment.getExternalStorageDirectory();	
 		String externalStoragePath = file.getAbsolutePath();
@@ -63,14 +67,21 @@ public class PlacesManager extends Thread
 	 * @param env Ambiente de sonido
 	 * @param places Listado de lugares
 	 */
-	public PlacesManager(List<Place> places, Context context)
+	public PlacesManager(Context context, SoundEnv soundEnvironment)
 	{
-		mUriManager = new URIManager();
-		searchedPlaces = places;
-		typeTransformer = new TypeTransform();
+		this.mUriManager = new URIManager();
+		this.searchedPlaces = new ArrayList<Place>();;
+		this.typeTransformer = new TypeTransform();
 		this.context=context;
+		this.currentPosition=-1;
+		this.lastPlayed=null;
+		this.soundEnvironment = soundEnvironment;
 	}
 	
+	public void createFiles(){
+		
+	}
+
 	/**
 	 * Obtiene la lista de Lugares (solo posicion)
 	 * @param radius Radio de Busqueda
@@ -79,7 +90,7 @@ public class PlacesManager extends Thread
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public List<Place> ParsePlaces(String radius, Location location) throws InterruptedException, ExecutionException
+	public void ParsePlaces(String radius, Location location) throws InterruptedException, ExecutionException
 	{
 		//Parseamos la posicion a String
 		String position = location.getLatitude()+","+location.getLongitude();
@@ -90,16 +101,14 @@ public class PlacesManager extends Thread
 		try 
 		{
 			JSONParsing(JSON);
-		} catch (JSONException e) 
+		}
+		catch (JSONException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Retornamos los lugares encontrados
-		return searchedPlaces;
 
 	}
-	
+
 	/** Parsea el JSON
 	 * @param JSON Json inicial
 	 * @throws JSONException
@@ -144,12 +153,67 @@ public class PlacesManager extends Thread
 	public void setUserLocation(Location userLocation) {
 		this.userLocation = userLocation;
 	}
-	
+
 	public void setTTS(TextToSpeech texttospeech){
 		tts = texttospeech;
 	}
 
+	public void PlayNext()
+	{
+		List<Place> availablePlaces = new ArrayList<Place>();
+		
+		for(Place place : searchedPlaces)
+		{
+			if(place.IsPlayable())
+				availablePlaces.add(place);
+		}
+		
+		if(availablePlaces.size()>0)
+		{
+			currentPosition++;
+			//Paramos de tocar el anterior
+			if(lastPlayed!=null)
+				lastPlayed.StopPlaying();
+			
+			//Revisamos si se pasa
+			if(currentPosition>=availablePlaces.size())
+				currentPosition=0;
+			lastPlayed = availablePlaces.get(currentPosition);
+			lastPlayed.addBufferAndSource(soundEnvironment);
+			lastPlayed.calculateSoundPosition(userLocation);
+			lastPlayed.start();
+			
+		}
+		
+	}	
 	
+	public void PlayPrevious()
+	{
+
+		List<Place> availablePlaces = new ArrayList<Place>();
+		for(Place place : searchedPlaces)
+		{
+			if(place.IsPlayable())
+				availablePlaces.add(place);
+		}
+		if(availablePlaces.size()>0)
+		{
+			currentPosition --;
+			//Paramos de tocar el anterior
+			if(lastPlayed!=null)
+				lastPlayed.StopPlaying();
+			
+			//Revisamos si se pasa
+			if(currentPosition < 0 )
+				currentPosition = availablePlaces.size() - 1;
+
+			lastPlayed = availablePlaces.get(currentPosition);
+			lastPlayed.addBufferAndSource(soundEnvironment);
+			lastPlayed.calculateSoundPosition(userLocation);
+			lastPlayed.start();
+		}
+		
+	}	
 }
 
 

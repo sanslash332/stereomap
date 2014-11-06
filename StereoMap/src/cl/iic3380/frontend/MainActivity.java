@@ -12,6 +12,7 @@ import cl.iic3380.utils.Utils;
 
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.view.GestureDetectorCompat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.GestureDetector;
@@ -31,26 +33,28 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements OnInitListener, OnGestureListener {
+public class MainActivity extends Activity implements OnInitListener, OnGestureListener, OnDoubleTapListener {
 
 	private LocationManager locationManager;
 	private MyLocationListener locationListener;
 	private String bestProvider;
 	private PlacesManager placesManager;
-	private List<Place> places;
 	private Location userLocation;
 	private TextView tv;
 	private SoundEnv env;
-	private GestureDetector gestureDetector;
 	private TextToSpeech tts;
-	private static final String RADIUS="500";
+	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
-
-	/*
-	 * Codigo de respaldo librerï¿½a OPENAL
-	 */
-
-
+	
+	//Deteccion de Gestos
+    private GestureDetectorCompat mDetector; 
+    private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
+        @Override
+        public void onTwoFingerDoubleTap() {
+            //TODO Generar el Mapa
+        }
+    };
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,13 +65,9 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		userLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 		//Luego cambiamos al bestProvider
-		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);
-		//Detector de gestos
-		gestureDetector = new GestureDetector(this, this);
-		
-		//Definimos los places y el placesManager
-		places = new ArrayList<Place>();
-		placesManager = new PlacesManager(places,this);
+		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);		
+		//Definir el Places Manager
+		placesManager = new PlacesManager(this,env);
 		placesManager.setUserLocation(userLocation);
 		
 		
@@ -79,9 +79,9 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		
 		//No se si esto va
 		tv = (TextView)findViewById(R.id.textView1);
-		tv.setText(RADIUS);
+		tv.setText(String.valueOf(radius));
 		//Definimos el Location Listener
-		locationListener = new MyLocationListener(placesManager,tv,RADIUS);
+		locationListener = new MyLocationListener(placesManager,tv,String.valueOf(radius));
 	
 		//Definimos la posición y todos los updates necesarios
 		placesManager.setUserLocation(userLocation);
@@ -93,15 +93,14 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 
-
+		//Detector de gestos
+		 mDetector = new GestureDetectorCompat(this,this);
+		
 	}
 
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event){
-		this.gestureDetector.onTouchEvent(event);
-		return super.onTouchEvent(event);
-	}
+
+
 	@Override
 	public void onInit(int status) {
 		//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
@@ -112,7 +111,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		
 		try 
 		{
-			places = placesManager.ParsePlaces(RADIUS, userLocation);
+			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -128,29 +127,22 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		
 		Button b1 = (Button)findViewById(R.id.button1);
 		
-		b1.setOnClickListener(new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-		    	TextView t2 = (TextView)findViewById(R.id.textView2);
-		    	t2.setText("");
-		        for(Place p : places)
-		        {
-		        	if(p.IsPlayable())
-		        	{
-		        		t2.append(p.toString());
-		        	}
-		        }
-		    }
-		});
-		
-//		for(Place p : searchedPlaces)
-//		{
-//			p.addBufferAndSource(env);
-//			p.calculateSoundPosition(userLocation);
-//			p.start();
-//			Thread.sleep(Utils.GetDuration(new File(p.getAudioFilePath() + p.getPlaceName().split(" ")[0] + ".wav")));
-//			p.join();
-//		}
+//		b1.setOnClickListener(new View.OnClickListener() {
+//		    @Override
+//		    public void onClick(View v) {
+//		    	TextView t2 = (TextView)findViewById(R.id.textView2);
+//		    	t2.setText("");
+//		        for(Place p : placesManager.searchedPlaces)
+//		        {
+//		        	if(p.IsPlayable())
+//		        	{
+//		        		t2.append(p.toString());
+//		        	}
+//		        }
+//		    }
+//		});
+//		
+
 
 
 
@@ -194,7 +186,19 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		super.onDestroy();
 	}
 
-
+	/**
+	 * Controladores de Gestures
+	 */
+	
+	@Override 
+    public boolean onTouchEvent(MotionEvent event){ 
+		if(multiTouchListener.onTouchEvent(event))
+            return true;
+        this.mDetector.onTouchEvent(event);
+        // Be sure to call the superclass implementation
+        return super.onTouchEvent(event);
+    }
+	
 	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO Auto-generated method stub
@@ -205,25 +209,26 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
-		if(velocityX > 0 && Math.abs(velocityX) >= Math.abs(velocityY)) //Movimiento hacia la derecha
-		{
-			tv.setText("derecha");
-			return true;
+		if(velocityX > 0 && Math.abs(velocityX) > Math.abs(velocityY)){
+			tv.setText("Derecha"); //Aumentar radio
+			placesManager.PlayNext();
 		}
-		else if (velocityX < 0 && Math.abs(velocityX) >= Math.abs(velocityY)) //Movimiento hacia la izquierda
-		{
-			tv.setText("izquierda");
-			return true;
+		if(velocityX < 0 && Math.abs(velocityX) > Math.abs(velocityY)){
+			tv.setText("Izquierda"); //Disminuir radio
+			placesManager.PlayPrevious();
 		}
-		else if (velocityY > 0 && Math.abs(velocityX) < Math.abs(velocityY)) //Movimiento hacia arriba
-		{
-			tv.setText("abajo");
-			return true;
+		if(velocityY > 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
+			radius -= 50;
+			if(radius < 0)
+				radius = 0;
+			tv.setText(String.valueOf(radius));
 		}
-		else if (velocityY < 0 && Math.abs(velocityX) < Math.abs(velocityY)) //Movimiento hacia abajo
-		{
-			tv.setText("arriba");
-			return true;
+		if(velocityY < 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
+			tv.setText("Arriba"); //Comenzar reproducción de audio (ParsePlaces si no hay ninguno)
+			radius += 50;
+			if (radius > 1000)
+				radius = 1000;
+			tv.setText(String.valueOf(radius));
 		}
 		return false;
 	}
@@ -253,6 +258,42 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean onDoubleTap(MotionEvent event) {
+		// TODO Auto-generated method stub
+		tv.setText("double tap");
+		try 
+		{
+			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//placesManager.start(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
+		return false;
+	}
+
+
+
+
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+	@Override
+	public boolean onDoubleTapEvent(MotionEvent e) {
 		// TODO Auto-generated method stub
 		return false;
 	}
