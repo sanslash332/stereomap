@@ -19,19 +19,29 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.ParcelUuid;
 import android.sax.StartElementListener;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.widget.Adapter;
+import android.os.AsyncTask;
+import android.os.Bundle;
 
 public class Bluetooth {
 	
 	private BluetoothAdapter adapter;
 	private List<String> ArrayAdapter= new ArrayList<String>();
+	private ArrayList<BluetoothDevice> btDevices = new ArrayList<BluetoothDevice>();
+	private BluetoothSocket btSocket;
+private BluetoothServerSocket serverSocket;
+private ConnectAsyncTask cntTask;
 	
-	
+
 	public Bluetooth(){	
-		adapter = BluetoothAdapter.getDefaultAdapter();	
+		adapter = BluetoothAdapter.getDefaultAdapter();
+		is_paired();
+		cntTask = new ConnectAsyncTask();
 		
+		 
 	}
 	public BluetoothAdapter get_adapter(){
 		return adapter;
@@ -49,9 +59,20 @@ public class Bluetooth {
 		    for (BluetoothDevice device : pairedDevices) {
 		        // Add the name and address to an array adapter to show in a ListView
 		        ArrayAdapter.add( device.getName() + "\n" + device.getAddress() );
+		        btDevices.add(device);
+		        
 		    }
 		}
 			
+	}
+	
+	public void connectToJockey()
+	{
+		//Metodo que efectua la coneccion
+		//Buscar el Jockey por id, mac o UID (lo que se tenga) entre la lista de devices paireados, y instansear los sockets. ademas instansear listener para cuando se reciban datos.
+		adapter.cancelDiscovery();
+		
+		cntTask.execute(dev);
 	}
 	
 	public void discover(){
@@ -102,4 +123,42 @@ public class Bluetooth {
 	}
 	
 
+}
+
+
+
+private class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, BluetoothSocket>{
+
+	private BluetoothSocket mmSocket;
+	private BluetoothDevice mmDevice;
+	
+	@Override
+	protected BluetoothSocket doInBackground(BluetoothDevice... device) {
+						
+		mmDevice = device[0];
+		
+		try {
+			
+			String mmUUID = "00001101-0000-1000-8000-00805F9B34FB";
+			mmSocket = mmDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(mmUUID));
+			mmSocket.connect();
+			
+		} catch (Exception e) { }
+		
+		return mmSocket;
+	}
+
+	@Override
+	protected void onPostExecute(BluetoothSocket result) {
+		
+		btSocket = result;
+		//Enable Button
+		
+		
+	}
+	
+	
+		
+	
+}
 }
