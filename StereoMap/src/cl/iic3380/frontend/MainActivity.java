@@ -6,14 +6,16 @@ import java.util.concurrent.ExecutionException;
 
 import org.pielot.openal.SoundEnv;
 
+import com.google.android.gms.maps.MapFragment;
+
 import cl.iic3380.backend.*;
 import cl.iic3380.frontend.R;
 import cl.iic3380.utils.Utils;
-
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.v4.view.GestureDetectorCompat;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -31,6 +33,7 @@ import android.view.GestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity implements OnInitListener, OnGestureListener, OnDoubleTapListener {
@@ -45,22 +48,27 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private TextToSpeech tts;
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
-	
+	private String tutorial;
+	private boolean didListenToTutorial;
+
 	//Deteccion de Gestos
-    private GestureDetectorCompat mDetector; 
-    private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
-        @Override
-        public void onTwoFingerDoubleTap() {
-            //TODO Generar el Mapa
-        }
-    };
-    
+	private GestureDetector mDetector; 
+	private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
+		@Override
+		public void onTwoFingerDoubleTap() {
+			tts.speak("Abriendo mapa,  un momento por favor", TextToSpeech.QUEUE_FLUSH, null);
+			Intent toMap = new Intent(MainActivity.this, MapActivity.class);
+			toMap.putExtra("Locations", placesManager.getLocations());
+			toMap.putExtra("UserLocation", placesManager.getStringUserLocation());
+			startActivity(toMap);
+		}
+	};
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
 		this.env = SoundEnv.getInstance(this);
-		
 		//Primero sacamos una localizacion que siempre devuelva algo
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		userLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
@@ -69,21 +77,21 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//Definir el Places Manager
 		placesManager = new PlacesManager(this,env);
 		placesManager.setUserLocation(userLocation);
-		
-		
-//		while(true)
-//		{
-//			if(placesManager.getUserLocation()!=null)
-//				break;
-//		}
-		
+		didListenToTutorial = true;
+		tutorial = "Bienvenido al mundo de stereo map, esperamos que disfrutes nuestra aplicación. "
+				+ "Para aumentar el radio de búsqueda, desliza tu dedo hacia arriba. "
+				+ "Para disminuir el radio de búsqueda, desliza tu dedo hacia abajo. "
+				+ "Para comenzar a reproducir los lugares cercanos, desliza tu dedo hacia la derecha. "
+				+ "Para realizar una nueva búsqueda, presiona dos veces tu pantalla. "
+				+ "Si estás acompañado de una persona vidente, presiona, con dos dedos, dos veces la pantalla. "
+				+ "Esto te mostrará un mapa con los lugares cercanos.";
+
 		//No se si esto va
-		tv = (TextView)findViewById(R.id.textView1);
-		tv.setText(String.valueOf(radius));
+
 		//Definimos el Location Listener
 		locationListener = new MyLocationListener(placesManager,tv,String.valueOf(radius));
-	
-		//Definimos la posici�n y todos los updates necesarios
+
+		//Definimos la posici�n y todos los updates necesarios
 		placesManager.setUserLocation(userLocation);
 		locationManager.requestSingleUpdate(bestProvider, locationListener, this.getMainLooper());
 
@@ -94,8 +102,8 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 
 		//Detector de gestos
-		 mDetector = new GestureDetectorCompat(this,this);
-		
+		mDetector = new GestureDetector(this,this);
+
 	}
 
 
@@ -106,9 +114,9 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
 		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
 		//				null);
-
-		//Luego de verificar el TTS hacemos el Parse de Places
-		
+		if (didListenToTutorial){
+			tts.speak(tutorial, TextToSpeech.QUEUE_FLUSH, null);
+		}
 		try 
 		{
 			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
@@ -120,30 +128,6 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			e.printStackTrace();
 		}
 		placesManager.start();
-		
-		/*
-		 * PRUEBAS
-		 */
-		
-		Button b1 = (Button)findViewById(R.id.button1);
-		
-//		b1.setOnClickListener(new View.OnClickListener() {
-//		    @Override
-//		    public void onClick(View v) {
-//		    	TextView t2 = (TextView)findViewById(R.id.textView2);
-//		    	t2.setText("");
-//		        for(Place p : placesManager.searchedPlaces)
-//		        {
-//		        	if(p.IsPlayable())
-//		        	{
-//		        		t2.append(p.toString());
-//		        	}
-//		        }
-//		    }
-//		});
-//		
-
-
 
 
 	}
@@ -188,16 +172,16 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	/**
 	 * Controladores de Gestures
 	 */
-	
+
 	@Override 
-    public boolean onTouchEvent(MotionEvent event){ 
+	public boolean onTouchEvent(MotionEvent event){ 
 		if(multiTouchListener.onTouchEvent(event))
-            return true;
-        this.mDetector.onTouchEvent(event);
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-	
+			return true;
+		this.mDetector.onTouchEvent(event);
+		// Be sure to call the superclass implementation
+		return super.onTouchEvent(event);
+	}
+
 	@Override
 	public boolean onDown(MotionEvent e) {
 		// TODO Auto-generated method stub
@@ -209,25 +193,24 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		if(velocityX > 0 && Math.abs(velocityX) > Math.abs(velocityY)){
-			tv.setText("Derecha"); //Aumentar radio
 			placesManager.PlayNext();
 		}
 		if(velocityX < 0 && Math.abs(velocityX) > Math.abs(velocityY)){
-			tv.setText("Izquierda"); //Disminuir radio
 			placesManager.PlayPrevious();
 		}
 		if(velocityY > 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
 			radius -= 50;
 			if(radius < 0)
 				radius = 0;
-			tv.setText(String.valueOf(radius));
+			String speech ="Radio " + String.valueOf(radius);
+			tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 		}
 		if(velocityY < 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
-			tv.setText("Arriba"); //Comenzar reproducci�n de audio (ParsePlaces si no hay ninguno)
 			radius += 50;
 			if (radius > 1000)
 				radius = 1000;
-			tv.setText(String.valueOf(radius));
+			String speech = "Radio " + String.valueOf(radius);
+			tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 		}
 		return false;
 	}
@@ -236,7 +219,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	@Override
 	public void onLongPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -251,7 +234,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -260,7 +243,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		// TODO Auto-generated method stub

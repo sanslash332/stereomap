@@ -15,6 +15,7 @@ import org.pielot.openal.SoundEnv;
 import android.content.Context;
 import android.location.Location;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.speech.tts.TextToSpeech;
 
 public class PlacesManager extends Thread
@@ -214,6 +215,19 @@ public class PlacesManager extends Thread
 		}
 		
 	}	
+	public String[] getLocations(){
+		String[] locations = new String[searchedPlaces.size()];
+		int i = 0;
+		for (Place p : searchedPlaces){
+			locations[i] = (p.getLatitud()+":"+p.getLongitud()+":"+p.getPlaceName());
+			i++;
+		}
+		return locations;
+	}
+	public String getStringUserLocation(){
+		String result = userLocation.getLatitude() + ":" + userLocation.getLongitude();
+		return result;
+	}
 }
 
 

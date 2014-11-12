@@ -1,10 +1,11 @@
 package cl.iic3380.backend;
 
+import android.content.Context;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 public abstract class SimpleTwoFingerDoubleTapDetector {
-	 private static final int TIMEOUT = ViewConfiguration.getDoubleTapTimeout() + 100;
+	 	private static final int TIMEOUT = ViewConfiguration.getDoubleTapTimeout() + 100;
 	    private long mFirstDownTime = 0;
 	    private boolean mSeparateTouches = false;
 	    private byte mTwoFingerTapCount = 0;
