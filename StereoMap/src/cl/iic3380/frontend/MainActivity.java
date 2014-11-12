@@ -247,7 +247,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		// TODO Auto-generated method stub
-		tv.setText("double tap");
+		tts.speak("Espere un momento, estamos buscando nuevos lugares", TextToSpeech.QUEUE_FLUSH, null);
 		try 
 		{
 			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
@@ -258,7 +258,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//placesManager.start(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
+		placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
 		return false;
 	}
 
