@@ -1,19 +1,18 @@
 package cl.iic3380.frontend;
 
-
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.pielot.openal.SoundEnv;
 
 import cl.iic3380.backend.*;
+import cl.iic3380.frontend.R;
 import cl.iic3380.utils.Utils;
 
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.view.GestureDetectorCompat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,70 +24,80 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.GestureDetector.OnDoubleTapListener;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.GestureDetector;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements OnInitListener {
+public class MainActivity extends Activity implements OnInitListener, OnGestureListener, OnDoubleTapListener {
 
 	private LocationManager locationManager;
 	private MyLocationListener locationListener;
 	private String bestProvider;
 	private PlacesManager placesManager;
-	private String radius;
-
+	private Location userLocation;
+	private TextView tv;
 	private SoundEnv env;
-
-	private String currentFileName;
-	private String[] synthResult;
-	private List<Place> places;
-
 	private TextToSpeech tts;
-	// This code can be any value you want, its just a checksum.
-	private static final int MY_DATA_CHECK_CODE = 1234;
-
-	/*
-	 * Codigo de respaldo librerï¿½a OPENAL
-	 */
-
-
+	private int radius= 500;
+	private static final int MY_DATA_CHECK_CODE=1234;
+	
+	//Deteccion de Gestos
+    private GestureDetectorCompat mDetector; 
+    private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
+        @Override
+        public void onTwoFingerDoubleTap() {
+            //TODO Generar el Mapa
+        }
+    };
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
-		//Localizaciï¿½n
+		this.env = SoundEnv.getInstance(this);
+		
+		//Primero sacamos una localizacion que siempre devuelva algo
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		//Sacar mejor provider y location
-		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);
-
-		radius="500";
-
-		TextView tv = (TextView)findViewById(R.id.textView1);
-		placesManager = new PlacesManager();
-		locationListener = new MyLocationListener(placesManager,tv,radius);
-
-
-
-		/**
-		 * ACA VA EL HARDCODEO DEL PROVIDER
-		 */
-		//bestProvider=LocationManager.GPS_PROVIDER;
-		/**
-		 * ACA TERMINA
-		 */
-
-		placesManager.setUserLocation(locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER));
-
+		userLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		//Luego cambiamos al bestProvider
+		bestProvider = locationManager.getBestProvider(Utils.GetFineCriteria(),true);		
+		//Definir el Places Manager
+		placesManager = new PlacesManager(this,env);
+		placesManager.setUserLocation(userLocation);
+		
+		
+//		while(true)
+//		{
+//			if(placesManager.getUserLocation()!=null)
+//				break;
+//		}
+		
+		//No se si esto va
+		tv = (TextView)findViewById(R.id.textView1);
+		tv.setText(String.valueOf(radius));
+		//Definimos el Location Listener
+		locationListener = new MyLocationListener(placesManager,tv,String.valueOf(radius));
+	
+		//Definimos la posición y todos los updates necesarios
+		placesManager.setUserLocation(userLocation);
 		locationManager.requestSingleUpdate(bestProvider, locationListener, this.getMainLooper());
 
 
-		// Fire off an intent to check if a TTS engine is installed
+		// Vemos si el TTs esta instalado
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 
-
+		//Detector de gestos
+		 mDetector = new GestureDetectorCompat(this,this);
+		
 	}
+
 
 
 
@@ -98,121 +107,46 @@ public class MainActivity extends Activity implements OnInitListener {
 		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
 		//				null);
 
-
-		while(true)
-		{
-			if(placesManager.getUserLocation()!=null)
-				break;
-		}
-
-		//ESCRIBIR EL AUDIO
-		File file = Environment.getExternalStorageDirectory();	
-		String externalStoragePath = file.getAbsolutePath();
-		HashMap<String, String> myHashRender = new HashMap<String,String>();
+		//Luego de verificar el TTS hacemos el Parse de Places
+		
 		try 
 		{
-			this.env = SoundEnv.getInstance(this);
-			Location userLocation = locationManager.getLastKnownLocation(bestProvider);
-			places = placesManager.parsePlaces(radius, userLocation);
-			File appTmpPath = new File(externalStoragePath + "/sounds/");
-			appTmpPath.mkdirs();
-			for(Place p : places)
-			{
-				String fileName = p.getPlaceName().split(" ")[0]+".wav";
-				String destinationPath = appTmpPath.getAbsolutePath() + "/" + fileName;
-				myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, p.GetSpeakedString());
-				tts.synthesizeToFile(p.GetSpeakedString(), myHashRender, destinationPath);
-				p.setAudioFilePath(appTmpPath.getAbsolutePath() + "/");
-				myHashRender.clear();	
-
-				while(tts.isSpeaking()){}
-
-				p.addBufferAndSource(env);
-				p.calculateSoundPosition(userLocation);
-				
-				p.start();
-				p.sleep(getDuration(new File(destinationPath)));
-
-
-
-
-			}
-
-			//			for(Place p : places)
-			//			{
-			//				p.addBufferAndSource(env);
-			//				p.calculateSoundPosition(userLocation);
-			//			}
-			//tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
-			//Utils.SpeakText(tts, result);
-			//readTextWithOpen4Al();
-		} 
-		catch (Exception e1)
-		{
+			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		placesManager.start();
+		
+		/*
+		 * PRUEBAS
+		 */
+		
+		Button b1 = (Button)findViewById(R.id.button1);
+		
+//		b1.setOnClickListener(new View.OnClickListener() {
+//		    @Override
+//		    public void onClick(View v) {
+//		    	TextView t2 = (TextView)findViewById(R.id.textView2);
+//		    	t2.setText("");
+//		        for(Place p : placesManager.searchedPlaces)
+//		        {
+//		        	if(p.IsPlayable())
+//		        	{
+//		        		t2.append(p.toString());
+//		        	}
+//		        }
+//		    }
+//		});
+//		
 
 
-		//synthResult = ttsSynth.speakText(result);
 
 
 	}
-
-	//				try {
-	//		
-	//					/* First we obtain the instance of the sound environment. */
-	//					/*
-	//					 * Now we load the sounds into the memory that we want to play
-	//					 * later. Each sound has to be buffered once only. To add new sound
-	//					 * copy them into the assets folder of the Android project.
-	//					 * Currently only mono .wav files are supported.
-	//					 */
-	//					//	Buffer placeBuffer = env.addBuffer(currentFileName);
-	//		
-	//					/*
-	//					 * To actually play a sound and place it somewhere in the sound
-	//					 * environment, we have to create sources. Each source has its own
-	//					 * parameters, such as 3D position or pitch. Several sources can
-	//					 * share a single buffer.
-	//					 */
-	//		
-	//					// Now we spread the sounds throughout the sound room.
-	//					currentSource.setPosition(0, 0, 0);
-	//		
-	//					// and change the pitch of the second lake.
-	//					currentSource.setPitch(1.1f);
-	//		
-	//					/*
-	//					 * These sounds are perceived from the perspective of a virtual
-	//					 * listener. Initially the position of this listener is 0,0,0. The
-	//					 * position and the orientation of the virtual listener can be
-	//					 * adjusted via the SoundEnv class.
-	//					 */
-	//					
-	//		
-	//		
-	//		
-	//		
-	//				} catch (Exception e) {
-	//					e.printStackTrace();
-	//				}
-
-
-
-	private void readTextWithOpen4Al() {
-		for(Place p : places){
-			p.start();
-
-			try 
-			{
-				p.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -223,6 +157,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			{
 				// success, create the TTS instance
 				tts = new TextToSpeech(this, this);
+				placesManager.setTTS(tts);
 			}
 			else
 			{
@@ -250,83 +185,116 @@ public class MainActivity extends Activity implements OnInitListener {
 		}
 		super.onDestroy();
 	}
-
-	//	LIBRERï¿½A
-	//	@Override
-	//	public void onResume() {
-	//		super.onResume();
-	//		Log.i(TAG, "onResume()");
-	//
-	//		/*
-	//		 * Start playing all sources. 'true' as parameter specifies that the
-	//		 * sounds shall be played as a loop.
-	//		 */
-	//		//this.lake1.play(true);
-	//		//this.lake2.play(true);
-	//		this.park1.play(true);
-	//	}
-	//
-	//		@Override
-	//		public void onPause() {
-	//			super.onPause();
-	//	
-	//			// Stop all sounds
-	//			this.env.stopAllSources();
-	//	
-	//		}
-	//
-	//	@Override
-	//	public void onDestroy() {
-	//		super.onDestroy();
-	//		Log.i(TAG, "onDestroy()");
-	//
-	//		// Be nice with the system and release all resources
-	//		this.env.stopAllSources();
-	//		this.env.release();
-	//	}
-	//
-	//	@Override
-	//	public void onLowMemory() {
-	//		this.env.onLowMemory();
-	//	}
-	//
+	/**
+	 * Controladores de Gestures
+	 */
+	
+	@Override 
+    public boolean onTouchEvent(MotionEvent event){ 
+		if(multiTouchListener.onTouchEvent(event))
+            return true;
+        this.mDetector.onTouchEvent(event);
+        // Be sure to call the superclass implementation
+        return super.onTouchEvent(event);
+    }
+	
+	@Override
+	public boolean onDown(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 
-	//	private void ChangeXPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(currentPos-delta, lastPositionY, lastPositionZ);
-	//		lastPositionX=currentPos-delta;
-	//	}
-	//	private void ChangeYPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(lastPositionX, currentPos-delta, lastPositionZ);
-	//		lastPositionY=currentPos-delta;
-	//	}
-	//	private void ChangeZPosition(int currentPos)
-	//	{
-	//		this.park1.setPosition(lastPositionX, lastPositionY, currentPos-delta);
-	//		lastPositionZ=currentPos-delta;
-	//	}
-
-	private int getDuration(File file)
-	{
-		//
-		int length = -1;
-		try
-		{
-			MediaPlayer mp = new MediaPlayer();
-			FileInputStream fs = new FileInputStream(file);
-			FileDescriptor fd = fs.getFD();
-			mp.setDataSource(fd);
-			mp.prepare();
-			length = mp.getDuration();
-			mp.release();
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		if(velocityX > 0 && Math.abs(velocityX) > Math.abs(velocityY)){
+			tv.setText("Derecha"); //Aumentar radio
+			placesManager.PlayNext();
 		}
-		catch(Exception e)
+		if(velocityX < 0 && Math.abs(velocityX) > Math.abs(velocityY)){
+			tv.setText("Izquierda"); //Disminuir radio
+			placesManager.PlayPrevious();
+		}
+		if(velocityY > 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
+			radius -= 50;
+			if(radius < 0)
+				radius = 0;
+			tv.setText(String.valueOf(radius));
+		}
+		if(velocityY < 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
+			tv.setText("Arriba"); //Comenzar reproducción de audio (ParsePlaces si no hay ninguno)
+			radius += 50;
+			if (radius > 1000)
+				radius = 1000;
+			tv.setText(String.valueOf(radius));
+		}
+		return false;
+	}
+
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean onDoubleTap(MotionEvent event) {
+		// TODO Auto-generated method stub
+		tv.setText("double tap");
+		try 
 		{
+			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return length;
-
+		//placesManager.start(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
+		return false;
 	}
+
+
+
+
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+	@Override
+	public boolean onDoubleTapEvent(MotionEvent e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

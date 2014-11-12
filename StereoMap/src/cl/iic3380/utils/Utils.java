@@ -1,12 +1,11 @@
 package cl.iic3380.utils;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 
 import android.location.Criteria;
-import android.os.Environment;
-import android.speech.tts.TextToSpeech;
+import android.media.MediaPlayer;
 
 public class Utils {
 	
@@ -23,49 +22,27 @@ public class Utils {
 
 	}
 	
-	public static String[] SpeakText(TextToSpeech tts,String toSpeak)
+	
+	@SuppressWarnings("resource")
+	public static int GetDuration(File file)
 	{
-		toSpeak = "hola";
-		HashMap<String, String> myHashRender = new HashMap<String,String>();
-		myHashRender.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, toSpeak);
-		String destFileName;
-		String fileName;
-		
-		File file = Environment.getExternalStorageDirectory();
-		
-//		File file2 = new File(file.getAbsolutePath()+"/hola.wav");
-//		try {
-//			file2.createNewFile();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		String route = file.getAbsolutePath()+"/";
-		
-		if(toSpeak.length()>20)
+		int length = -1;
+		try
 		{
-			destFileName = route+toSpeak.substring(0, 20)+".wav";
-			fileName = toSpeak.substring(0,20);
+			MediaPlayer mp = new MediaPlayer();
+			FileInputStream fs = new FileInputStream(file);
+			FileDescriptor fd = fs.getFD();
+			mp.setDataSource(fd);
+			mp.prepare();
+			length = mp.getDuration();
+			mp.release();
 		}
-		else 
+		catch(Exception e)
 		{
-			destFileName = route+toSpeak+".wav";
-			fileName = toSpeak;
+			e.printStackTrace();
 		}
-		
-//		while(tts.isSpeaking()){
-//			
-//		}
-		
-		//tts.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-		tts.synthesizeToFile(toSpeak, myHashRender, fileName+".wav");
-		
-		
-		String[] resultArray = {fileName,route};
-		return resultArray;
-		
-		
+		return length;
+
 	}
 
 }
