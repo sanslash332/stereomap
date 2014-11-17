@@ -73,6 +73,7 @@ public class Place extends Thread
 			totalFilePath = audioFilePath+name.split(" ")[0]+".wav";
 			this.buffer = env.addBuffer(name, totalFilePath);
 			this.currentSource = env.addSource(buffer);
+			currentSource.setGain(7.5f);
 			currentSource.setPosition(0, 0, 0);
 			currentSource.setPitch(1.1f);
 		} catch (IOException e) {

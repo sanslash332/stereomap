@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//Definir el Places Manager
 		placesManager = new PlacesManager(this,env);
 		placesManager.setUserLocation(userLocation);
-		didListenToTutorial = true;
+		didListenToTutorial = false;
 		tutorial = "Bienvenido al mundo de stereo map, esperamos que disfrutes nuestra aplicación. "
 				+ "Para aumentar el radio de búsqueda, desliza tu dedo hacia arriba. "
 				+ "Para disminuir el radio de búsqueda, desliza tu dedo hacia abajo. "
