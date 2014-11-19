@@ -3,9 +3,14 @@ package cl.iic3380.backend;
 import android.bluetooth.*;
 import android.content.Intent;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.Object;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +34,7 @@ import android.os.Bundle;
 public class Bluetooth {
 	
 	private BluetoothAdapter adapter;
-	private List<String> ArrayAdapter= new ArrayList<String>();
+	
 	private ArrayList<BluetoothDevice> btDevices = new ArrayList<BluetoothDevice>();
 	private BluetoothSocket btSocket;
 private BluetoothServerSocket serverSocket;
@@ -46,9 +51,9 @@ private ConnectAsyncTask cntTask;
 	public BluetoothAdapter get_adapter(){
 		return adapter;
 	}
-	public List <String> get_paired(){
+	public ArrayList<BluetoothDevice> get_paired(){
 		is_paired();
-		return ArrayAdapter;
+		return btDevices;
 	}
 	
 	public void is_paired(){		
@@ -58,7 +63,7 @@ private ConnectAsyncTask cntTask;
 		    // Loop through paired devices
 		    for (BluetoothDevice device : pairedDevices) {
 		        // Add the name and address to an array adapter to show in a ListView
-		        ArrayAdapter.add( device.getName() + "\n" + device.getAddress() );
+		        
 		        btDevices.add(device);
 		        
 		    }
@@ -71,8 +76,48 @@ private ConnectAsyncTask cntTask;
 		//Metodo que efectua la coneccion
 		//Buscar el Jockey por id, mac o UID (lo que se tenga) entre la lista de devices paireados, y instansear los sockets. ademas instansear listener para cuando se reciban datos.
 		adapter.cancelDiscovery();
+		BluetoothDevice jockey = null;
+		for(BluetoothDevice dev : btDevices)
+		{
+		if(dev.getName() == "stereoJockeyMap")
+		{
+			jockey=dev;
+			
+		}
 		
-		cntTask.execute(dev);
+		}
+		if(jockey!=null )
+		{
+			btSocket = cntTask.execute(jockey);
+			
+		}
+		
+		
+	}
+	
+	public void receiptData()
+	{
+		InputStream mms=null;
+		InputStreamReader str =null;
+		BufferedReader reed =null;
+		while(btSocket.isConnected())
+		{
+			if(mms == null)
+			{
+				mms = btSocket.getInputStream();
+				InputStreamReader str = new InputStreamReader(mms, Charset.defaultCharset());
+				BufferedReader reed = new BufferedReader(str);
+
+			}
+			
+				if(reed.ready())
+				{
+				string jkContent = reed.readLine();
+				jockeyData jk = new jockeyData(jkContent);
+				
+				}
+				
+		}
 	}
 	
 	public void discover(){
@@ -87,7 +132,7 @@ private ConnectAsyncTask cntTask;
 		            // Get the BluetoothDevice object from the Intent
 		            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 		            // Add the name and address to an array adapter to show in a ListView
-		            ArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+		            
 		        }
 		    }
 		};
@@ -151,7 +196,8 @@ private class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, Bluet
 	@Override
 	protected void onPostExecute(BluetoothSocket result) {
 		
-		btSocket = result;
+		blue.BTSocket = result;
+		
 		//Enable Button
 		
 		
@@ -160,5 +206,5 @@ private class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, Bluet
 	
 		
 	
-}
+
 }
