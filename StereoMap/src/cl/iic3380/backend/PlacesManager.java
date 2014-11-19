@@ -3,6 +3,8 @@ package cl.iic3380.backend;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -63,6 +65,8 @@ public class PlacesManager extends Thread
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}		
+		if(searchedPlaces.size() > 0)
+			tts.speak("Lugares actualizados", TextToSpeech.QUEUE_FLUSH, null);
 	}
 	/** Constructor de la clase
 	 * @param env Ambiente de sonido
@@ -78,9 +82,9 @@ public class PlacesManager extends Thread
 		this.lastPlayed=null;
 		this.soundEnvironment = soundEnvironment;
 	}
-	
+
 	public void createFiles(){
-		
+
 	}
 
 	/**
@@ -93,15 +97,17 @@ public class PlacesManager extends Thread
 	 */
 	public void ParsePlaces(String radius, Location location) throws InterruptedException, ExecutionException
 	{
-		//Parseamos la posicion a String
 		String position = location.getLatitude()+","+location.getLongitude();
-		//TODO Cambiar que se actualizen
 		searchedPlaces.clear();
+
 		//Armamos y parseamos el Json
 		String JSON = new HttpRequest().execute(mUriManager.createURI(radius, position)).get();
 		try 
 		{
 			JSONParsing(JSON);
+			Collections.sort(searchedPlaces, new DistanceComparator(userLocation));
+			String hola = "kjnk";
+			hola.charAt(1);
 		}
 		catch (JSONException e) 
 		{
@@ -115,24 +121,25 @@ public class PlacesManager extends Thread
 	 * @throws JSONException
 	 */
 	private void JSONParsing(String JSON) throws JSONException{
-		JSONObject returnedJSON = new JSONObject(JSON);
-		JSONArray results = returnedJSON.getJSONArray("results");
-		String name = "";
-		List<String> types = null;
-		double lat = 0;
-		double lng = 0;
-		for (int i = 0; i < results.length(); i++)
-		{
-			JSONObject particularResult = results.getJSONObject(i);
-			name = particularResult.getString("name");
-			lat = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-			lng = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
-			types = getStringArrayFromJSONArray(particularResult.getJSONArray("types"));
-			Place newPlace = new Place(lat, lng, name, types, context);
-			searchedPlaces.add(newPlace);
+		if(JSON != null){
+			JSONObject returnedJSON = new JSONObject(JSON);
+			JSONArray results = returnedJSON.getJSONArray("results");
+			String name = "";
+			List<String> types = null;
+			double lat = 0;
+			double lng = 0;
+			for (int i = 0; i < results.length(); i++)
+			{
+				JSONObject particularResult = results.getJSONObject(i);
+				name = particularResult.getString("name");
+				lat = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+				lng = particularResult.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+				types = getStringArrayFromJSONArray(particularResult.getJSONArray("types"));
+				Place newPlace = new Place(lat, lng, name, types, context);
+				searchedPlaces.add(newPlace);
+			}
 		}
-
-
+		else tts.speak("No tiene conexión, conéctese a la red e intente más tarde", TextToSpeech.QUEUE_FLUSH, null);
 	}
 	/** Obtiene String Array de un JSON array
 	 * @param jsonArray
@@ -162,32 +169,32 @@ public class PlacesManager extends Thread
 	public void PlayNext()
 	{
 		List<Place> availablePlaces = new ArrayList<Place>();
-		
+
 		for(Place place : searchedPlaces)
 		{
 			if(place.IsPlayable())
 				availablePlaces.add(place);
 		}
-		
+
 		if(availablePlaces.size()>0)
 		{
 			currentPosition++;
 			//Paramos de tocar el anterior
 			if(lastPlayed!=null)
 				lastPlayed.StopPlaying();
-			
+
 			//Revisamos si se pasa
 			if(currentPosition>=availablePlaces.size())
 				currentPosition=0;
-			lastPlayed = availablePlaces.get(currentPosition);
+			lastPlayed = new Place(availablePlaces.get(currentPosition));
 			lastPlayed.addBufferAndSource(soundEnvironment);
 			lastPlayed.calculateSoundPosition(userLocation);
 			lastPlayed.start();
-			
+
 		}
-		
+
 	}	
-	
+
 	public void PlayPrevious()
 	{
 
@@ -203,17 +210,17 @@ public class PlacesManager extends Thread
 			//Paramos de tocar el anterior
 			if(lastPlayed!=null)
 				lastPlayed.StopPlaying();
-			
+
 			//Revisamos si se pasa
 			if(currentPosition < 0 )
 				currentPosition = availablePlaces.size() - 1;
 
-			lastPlayed = availablePlaces.get(currentPosition);
+			lastPlayed = new Place(availablePlaces.get(currentPosition));
 			lastPlayed.addBufferAndSource(soundEnvironment);
 			lastPlayed.calculateSoundPosition(userLocation);
 			lastPlayed.start();
 		}
-		
+
 	}	
 	public String[] getLocations(){
 		String[] locations = new String[searchedPlaces.size()];
@@ -227,6 +234,16 @@ public class PlacesManager extends Thread
 	public String getStringUserLocation(){
 		String result = userLocation.getLatitude() + ":" + userLocation.getLongitude();
 		return result;
+	}
+}
+class DistanceComparator implements Comparator<Place> {
+	private Location userLocation;
+	public DistanceComparator(Location uLoc){
+		this.userLocation = uLoc;
+	}
+	@Override
+	public int compare(Place a, Place b) {
+		return a.getDistanceToUser(userLocation) < b.getDistanceToUser(userLocation) ? -1 : a.getDistanceToUser(userLocation) == b.getDistanceToUser(userLocation) ? 0 : 1;
 	}
 }
 

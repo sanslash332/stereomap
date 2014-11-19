@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
 	private String tutorial;
-	private boolean didListenToTutorial;
+	private boolean didNotListenToTutorial;
 
 	//Deteccion de Gestos
 	private GestureDetector mDetector; 
@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//Definir el Places Manager
 		placesManager = new PlacesManager(this,env);
 		placesManager.setUserLocation(userLocation);
-		didListenToTutorial = false;
+		didNotListenToTutorial = true;
 		tutorial = "Bienvenido al mundo de stereo map, esperamos que disfrutes nuestra aplicación. "
 				+ "Para aumentar el radio de búsqueda, desliza tu dedo hacia arriba. "
 				+ "Para disminuir el radio de búsqueda, desliza tu dedo hacia abajo. "
@@ -89,7 +89,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//No se si esto va
 
 		//Definimos el Location Listener
-		locationListener = new MyLocationListener(placesManager,tv,String.valueOf(radius));
+		locationListener = new MyLocationListener(placesManager);
 
 		//Definimos la posici�n y todos los updates necesarios
 		placesManager.setUserLocation(userLocation);
@@ -114,8 +114,8 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		//		tts.speak("Hello folks, welcome to my little demo on Text To Speech.",
 		//				TextToSpeech.QUEUE_FLUSH,  // Drop all pending entries in the playback queue.
 		//				null);
-		if (didListenToTutorial){
-			tts.speak(tutorial, TextToSpeech.QUEUE_FLUSH, null);
+		if (didNotListenToTutorial){
+			//tts.speak(tutorial, TextToSpeech.QUEUE_FLUSH, null);
 		}
 		try 
 		{
@@ -247,15 +247,15 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		// TODO Auto-generated method stub
-		tts.speak("Espere un momento, estamos buscando nuevos lugares", TextToSpeech.QUEUE_FLUSH, null);
+		tts.speak("Estamos buscando nuevos lugares, le avisaremos cuando estén listos", TextToSpeech.QUEUE_FLUSH, null);
 		try 
 		{
 			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			tts.speak("No pudimos actualizar los lugares, intente más tarde", TextToSpeech.QUEUE_FLUSH, null);
 			e.printStackTrace();
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
+			tts.speak("No pudimos actualizar los lugares, intente más tarde", TextToSpeech.QUEUE_FLUSH, null);
 			e.printStackTrace();
 		}
 		placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
