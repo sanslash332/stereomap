@@ -22,7 +22,6 @@ public class Place extends Thread
 	private List<String> types;		
 	private Buffer buffer;
 	private Source currentSource;
-	private Context context;
 
 
 	/** Constructor de la clase
@@ -37,7 +36,6 @@ public class Place extends Thread
 		this.longitud = longitude;
 		this.name = name;
 		this.types = types;
-		this.context=context;
 	}
 
 	@Override
@@ -46,6 +44,13 @@ public class Place extends Thread
 		currentSource.play(false);
 	}
 	
+	public Place(Place p){
+		this.audioFilePath = p.getAudioFilePath();
+		this.latitud = p.getLatitud();
+		this.longitud = p.getLongitud();
+		this.name = p.getPlaceName();
+		this.types = p.getTypes();
+	}
 	
 	public String GetSpeakedString()
 	{
@@ -63,7 +68,7 @@ public class Place extends Thread
 		return this.audioFilePath;
 	}
 	
-	/** Añade buffer y source
+	/** Aï¿½ade buffer y source
 	 * @param env Ambiente de sonido
 	 */
 	public void addBufferAndSource(SoundEnv env) 
@@ -96,7 +101,11 @@ public class Place extends Thread
 
 		currentSource.setPosition(newLatitude, newLongitude, 0);
 	}
-	
+	public double getDistanceToUser(Location userLocation){
+		double latitudeDifference = userLocation.getLatitude()-latitud;
+		double longitudeDifference = userLocation.getLongitude()-longitud;
+		return Math.sqrt(Math.pow(latitudeDifference, 2)+Math.pow(longitudeDifference, 2));
+	}
 	public boolean IsPlayable()
 	{
 		//Ver si se puede tocar
