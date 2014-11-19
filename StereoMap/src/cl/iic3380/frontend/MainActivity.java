@@ -31,6 +31,7 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.GestureDetector;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,11 +57,18 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
 		@Override
 		public void onTwoFingerDoubleTap() {
-			tts.speak("Abriendo mapa,  un momento por favor", TextToSpeech.QUEUE_FLUSH, null);
-			Intent toMap = new Intent(MainActivity.this, MapActivity.class);
-			toMap.putExtra("Locations", placesManager.getLocations());
-			toMap.putExtra("UserLocation", placesManager.getStringUserLocation());
-			startActivity(toMap);
+			tts.speak("Espere un momento, estamos buscando nuevos lugares", TextToSpeech.QUEUE_FLUSH, null);
+			try 
+			{
+				placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
 		}
 	};
 
@@ -82,9 +90,9 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 				+ "Para aumentar el radio de búsqueda, desliza tu dedo hacia arriba. "
 				+ "Para disminuir el radio de búsqueda, desliza tu dedo hacia abajo. "
 				+ "Para comenzar a reproducir los lugares cercanos, desliza tu dedo hacia la derecha. "
-				+ "Para realizar una nueva búsqueda, presiona dos veces tu pantalla. "
-				+ "Si estás acompañado de una persona vidente, presiona, con dos dedos, dos veces la pantalla. "
-				+ "Esto te mostrará un mapa con los lugares cercanos.";
+				+ "Si estás acompañado de una persona vidente, presiona dos veces la pantalla. "
+				+ "Esto te mostrará un mapa con los lugares cercanos."
+				+ "Para realizar una nueva búsqueda, presiona, con dos dedos, dos veces tu pantalla. ";	
 
 		//No se si esto va
 
@@ -103,7 +111,6 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 
 		//Detector de gestos
 		mDetector = new GestureDetector(this,this);
-
 	}
 
 
@@ -246,19 +253,12 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
-		// TODO Auto-generated method stub
-		tts.speak("Espere un momento, estamos buscando nuevos lugares", TextToSpeech.QUEUE_FLUSH, null);
-		try 
-		{
-			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
+		
+		tts.speak("Abriendo mapa,  un momento por favor", TextToSpeech.QUEUE_FLUSH, null);
+		Intent toMap = new Intent(MainActivity.this, MapActivity.class);
+		toMap.putExtra("Locations", placesManager.getLocations());
+		toMap.putExtra("UserLocation", placesManager.getStringUserLocation());
+		startActivity(toMap);
 		return false;
 	}
 
@@ -278,6 +278,19 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	public boolean onDoubleTapEvent(MotionEvent e) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public Location GetLocation()
+	{
+		return this.userLocation;
+	}
+	public PlacesManager GetPlacesManager()
+	{
+		return this.placesManager;
+	}
+	public int GetRadius()
+	{
+		return this.radius;
 	}
 
 }

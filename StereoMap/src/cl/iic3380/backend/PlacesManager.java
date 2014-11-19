@@ -228,6 +228,11 @@ public class PlacesManager extends Thread
 		String result = userLocation.getLatitude() + ":" + userLocation.getLongitude();
 		return result;
 	}
+	
+	public Place GetLastPlayed()
+	{
+		return lastPlayed;
+	}
 }
 
 
