@@ -31,7 +31,7 @@ import android.widget.Adapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-public class Bluetooth {
+public class Bluetooth extends Thread {
 	
 	private BluetoothAdapter adapter;
 	
@@ -39,7 +39,7 @@ public class Bluetooth {
 	private BluetoothSocket btSocket;
 private BluetoothServerSocket serverSocket;
 private ConnectAsyncTask cntTask;
-	
+private jockeyData jockey;	
 
 	public Bluetooth(){	
 		adapter = BluetoothAdapter.getDefaultAdapter();
@@ -51,6 +51,18 @@ private ConnectAsyncTask cntTask;
 	public BluetoothAdapter get_adapter(){
 		return adapter;
 	}
+	
+	public jockeyData getJockey()
+	{
+		return(this.jockey);
+	}
+	
+	@Override
+	public void run() {
+		receiptData();	
+	}
+	
+	
 	public ArrayList<BluetoothDevice> get_paired(){
 		is_paired();
 		return btDevices;
@@ -105,16 +117,20 @@ private ConnectAsyncTask cntTask;
 			if(mms == null)
 			{
 				mms = btSocket.getInputStream();
-				InputStreamReader str = new InputStreamReader(mms, Charset.defaultCharset());
-				BufferedReader reed = new BufferedReader(str);
+				 str = new InputStreamReader(mms, Charset.defaultCharset());
+				 reed = new BufferedReader(str);
 
 			}
 			
-				if(reed.ready())
+				if(reed != null && reed.ready())
 				{
 				string jkContent = reed.readLine();
 				jockeyData jk = new jockeyData(jkContent);
 				
+				if(!jk.isInvalid())
+				{
+					this.jockey=jk;
+				}
 				}
 				
 		}
@@ -196,7 +212,14 @@ private class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, Bluet
 	@Override
 	protected void onPostExecute(BluetoothSocket result) {
 		
-		blue.BTSocket = result;
+		if(blue != null)
+		{
+			if (blue.btSocket != null)
+			{
+				blue.run();
+			}
+		}
+		
 		
 		//Enable Button
 		
