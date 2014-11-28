@@ -86,21 +86,36 @@ public class Place extends Thread
 			e.printStackTrace();
 		}
 	}
-	public void calculateSoundPosition(Location userLocation) {
-		//TODO crear algoritmo para calcular la posicion en la que se tiene que escuchar el sonido
+	
+	
+	public void calculateSoundPosition(Location userLocation, int angle) {
 		//latitude norte-sur
 		//longitude este-oeste
-		double latitudeDifference = userLocation.getLatitude()-latitud;
 		double longitudeDifference = userLocation.getLongitude()-longitud;
+		double latitudeDifference = userLocation.getLatitude()-latitud;
 		double magnitude = Math.sqrt(Math.pow(latitudeDifference, 2)+Math.pow(longitudeDifference, 2));
-		latitudeDifference /= magnitude;
 		longitudeDifference /= magnitude;
+		latitudeDifference /= magnitude;
 
-		float newLatitude = (float)latitudeDifference*20;
-		float newLongitude = (float)longitudeDifference*20;
+		float unitLongitude = (float)longitudeDifference;
+		float unitLatitude = (float)latitudeDifference;
+		
+		//Calculo de angulo en radianes
+		double radianAngle = 2*(360-angle)*Math.PI/360;
 
-		currentSource.setPosition(newLatitude, newLongitude, 0);
+		float finalLongitude = (float)(unitLatitude*Math.cos(radianAngle) - unitLongitude*Math.sin(radianAngle));
+		float finalLatitude = (float)(unitLatitude*Math.cos(radianAngle) + unitLongitude*Math.sin(radianAngle));
+
+		
+		currentSource.setPosition(finalLongitude, finalLatitude, 0);
 	}
+	
+	
+	
+	
+	
+	
+	
 	public double getDistanceToUser(Location userLocation){
 		double latitudeDifference = userLocation.getLatitude()-latitud;
 		double longitudeDifference = userLocation.getLongitude()-longitud;

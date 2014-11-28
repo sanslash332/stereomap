@@ -166,7 +166,7 @@ public class PlacesManager extends Thread
 		tts = texttospeech;
 	}
 
-	public void PlayNext()
+	public void PlayNext(int angle)
 	{
 		List<Place> availablePlaces = new ArrayList<Place>();
 
@@ -188,14 +188,14 @@ public class PlacesManager extends Thread
 				currentPosition=0;
 			lastPlayed = new Place(availablePlaces.get(currentPosition));
 			lastPlayed.addBufferAndSource(soundEnvironment);
-			lastPlayed.calculateSoundPosition(userLocation);
+			lastPlayed.calculateSoundPosition(userLocation, angle);
 			lastPlayed.start();
 
 		}
 
 	}	
 
-	public void PlayPrevious()
+	public void PlayPrevious(int angle)
 	{
 
 		List<Place> availablePlaces = new ArrayList<Place>();
@@ -217,7 +217,7 @@ public class PlacesManager extends Thread
 
 			lastPlayed = new Place(availablePlaces.get(currentPosition));
 			lastPlayed.addBufferAndSource(soundEnvironment);
-			lastPlayed.calculateSoundPosition(userLocation);
+			lastPlayed.calculateSoundPosition(userLocation, angle);
 			lastPlayed.start();
 		}
 

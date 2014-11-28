@@ -241,10 +241,17 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		if(velocityX > 0 && Math.abs(velocityX) > Math.abs(velocityY)){
-			placesManager.PlayNext();
+			if(bt!=null && bt.getJockey()!=null)
+				placesManager.PlayNext(bt.getJockey().getAngle());
+			else
+				placesManager.PlayNext(0);
+
 		}
 		if(velocityX < 0 && Math.abs(velocityX) > Math.abs(velocityY)){
-			placesManager.PlayPrevious();
+			if(bt!=null && bt.getJockey()!=null)
+				placesManager.PlayPrevious(bt.getJockey().getAngle());
+			else
+				placesManager.PlayPrevious(0);
 		}
 		if(velocityY > 0 && Math.abs(velocityX) <= Math.abs(velocityY)){
 			radius -= 50;
