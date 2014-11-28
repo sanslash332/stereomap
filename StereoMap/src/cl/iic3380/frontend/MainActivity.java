@@ -16,6 +16,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -49,10 +50,11 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private TextToSpeech tts;
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
-<<<<<<< HEAD
+
 	private String tutorial;
 	private boolean didNotListenToTutorial;
 
+	private Bluetooth bt = new Bluetooth();
 	//Deteccion de Gestos
 	private GestureDetector mDetector; 
 	private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
@@ -72,27 +74,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
 		}
 	};
-=======
 
-	private Bluetooth bt = new Bluetooth();
-
-	/*
-	 * Codigo de respaldo librerï¿½a OPENAL
-	 */
-
-
-
-	
-	//Deteccion de Gestos
-    private GestureDetectorCompat mDetector; 
-    private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
-        @Override
-        public void onTwoFingerDoubleTap() {
-            //TODO Generar el Mapa
-        }
-    };
-    
->>>>>>> origin/Bluetooth
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -130,26 +112,37 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-		
-		
+
+
 		//Bluetooth
 		//Pedir encenderlo
 		if (!bt.get_adapter().isEnabled()) {
-		    Intent enableBtIntent = new Intent(bt.get_adapter().ACTION_REQUEST_ENABLE);
-		    startActivityForResult(enableBtIntent, 1);
+			Intent enableBtIntent = new Intent(bt.get_adapter().ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, 1);
 		}
-		
-		//Mostrar paired
-		List <String> bt_pairs = bt.get_paired();
 
-		Toast toast = Toast.makeText(getApplicationContext(), bt_pairs.get(0), Toast.LENGTH_LONG);
-		toast.show();
-bt= new Bluetooth();
-bt.connectToJockey();
-if(bt.isConected())
-{
-	bt.start();
-}
+		//Mostrar paired
+		List<BluetoothDevice> bt_pairs = bt.get_paired();
+
+		if(bt_pairs.size()>0)
+		{
+			Toast toast = Toast.makeText(getApplicationContext(), bt_pairs.get(0).toString(), Toast.LENGTH_LONG);
+			toast.show();
+		}
+		bt= new Bluetooth();
+		try {
+			bt.connectToJockey();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(bt.isConected())
+		{
+			bt.start();
+		}
 
 		//Detector de gestos
 		mDetector = new GestureDetector(this,this);
@@ -216,7 +209,7 @@ if(bt.isConected())
 			tts.stop();
 			tts.shutdown();
 		}
-		//en el caso de estar cerrando, destruir bt también:
+		//en el caso de estar cerrando, destruir bt tambiï¿½n:
 		try {
 			bt.stop();
 		} catch (Exception e) {
@@ -301,7 +294,7 @@ if(bt.isConected())
 
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
-		
+
 		// TODO Auto-generated method stub
 		tts.speak("Estamos buscando nuevos lugares, le avisaremos cuando estÃ©n listos", TextToSpeech.QUEUE_FLUSH, null);
 		try 
