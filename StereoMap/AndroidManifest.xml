@@ -12,6 +12,11 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
+<<<<<<< HEAD
+=======
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+>>>>>>> origin/Bluetooth
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

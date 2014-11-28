@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private TextToSpeech tts;
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
+<<<<<<< HEAD
 	private String tutorial;
 	private boolean didNotListenToTutorial;
 
@@ -71,6 +72,27 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
 		}
 	};
+=======
+
+	private Bluetooth bt = new Bluetooth();
+
+	/*
+	 * Codigo de respaldo librerï¿½a OPENAL
+	 */
+
+
+
+	
+	//Deteccion de Gestos
+    private GestureDetectorCompat mDetector; 
+    private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
+        @Override
+        public void onTwoFingerDoubleTap() {
+            //TODO Generar el Mapa
+        }
+    };
+    
+>>>>>>> origin/Bluetooth
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +130,26 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
+		
+		
+		//Bluetooth
+		//Pedir encenderlo
+		if (!bt.get_adapter().isEnabled()) {
+		    Intent enableBtIntent = new Intent(bt.get_adapter().ACTION_REQUEST_ENABLE);
+		    startActivityForResult(enableBtIntent, 1);
+		}
+		
+		//Mostrar paired
+		List <String> bt_pairs = bt.get_paired();
+
+		Toast toast = Toast.makeText(getApplicationContext(), bt_pairs.get(0), Toast.LENGTH_LONG);
+		toast.show();
+bt= new Bluetooth();
+bt.connectToJockey();
+if(bt.isConected())
+{
+	bt.start();
+}
 
 		//Detector de gestos
 		mDetector = new GestureDetector(this,this);
@@ -173,6 +215,12 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		{
 			tts.stop();
 			tts.shutdown();
+		}
+		//en el caso de estar cerrando, destruir bt también:
+		try {
+			bt.stop();
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		super.onDestroy();
 	}
