@@ -56,7 +56,18 @@ private jockeyData jockey;
 	{
 		return(this.jockey);
 	}
-	
+
+	public bool isConected()
+	{
+		if(btSocket!= null)
+		{
+			return(btSocket.isConnected());
+		}
+		else {
+			return(false);
+		}
+		
+	}
 	@Override
 	public void run() {
 		receiptData();	

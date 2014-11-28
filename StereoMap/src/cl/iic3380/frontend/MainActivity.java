@@ -46,7 +46,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private TextToSpeech tts;
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
-<<<<<<< HEAD
+
 	private Bluetooth bt = new Bluetooth();
 
 	/*
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	 */
 
 
-=======
+
 	
 	//Deteccion de Gestos
     private GestureDetectorCompat mDetector; 
@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
         }
     };
     
->>>>>>> origin/develop
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -117,6 +117,12 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 
 		Toast toast = Toast.makeText(getApplicationContext(), bt_pairs.get(0), Toast.LENGTH_LONG);
 		toast.show();
+bt= new Bluetooth();
+bt.connectToJockey();
+if(bt.isConected())
+{
+	bt.start();
+}
 
 		//Detector de gestos
 		 mDetector = new GestureDetectorCompat(this,this);
@@ -207,6 +213,12 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		{
 			tts.stop();
 			tts.shutdown();
+		}
+		//en el caso de estar cerrando, destruir bt también:
+		try {
+			bt.stop();
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		super.onDestroy();
 	}
