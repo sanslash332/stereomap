@@ -51,6 +51,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private int radius= 500;
 	private static final int MY_DATA_CHECK_CODE=1234;
 
+	private Context mainContext;
 	private String tutorial;
 	private boolean didNotListenToTutorial;
 
@@ -60,18 +61,22 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	private SimpleTwoFingerDoubleTapDetector multiTouchListener = new SimpleTwoFingerDoubleTapDetector() {
 		@Override
 		public void onTwoFingerDoubleTap() {
-			tts.speak("Espere un momento, estamos buscando nuevos lugares", TextToSpeech.QUEUE_FLUSH, null);
-			try 
-			{
-				placesManager.ParsePlaces(String.valueOf(radius), userLocation);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			placesManager.run(); //QUE HACEMOS PARA PODER INICIAR DE NUEVO EL THREAD?
+			tts.speak("Espere un momento, estamos abriendo el mapa", TextToSpeech.QUEUE_FLUSH, null);
+			Intent map = new Intent(mainContext, MapActivity.class);
+			map.putExtra("Locations", placesManager.getLocations());
+			map.putExtra("UserLocation", placesManager.getStringUserLocation());
+			startActivity(map);
+//			try 
+//			{
+//				placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (ExecutionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			placesManager.run(); 
 		}
 	};
 
@@ -81,6 +86,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
 		this.env = SoundEnv.getInstance(this);
+		this.mainContext = this;
 		//Primero sacamos una localizacion que siempre devuelva algo
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		userLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
