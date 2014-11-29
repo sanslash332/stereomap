@@ -222,6 +222,12 @@ public class PlacesManager extends Thread
 		}
 
 	}	
+	
+	public void stopCurrent(){
+		if(lastPlayed != null){
+			lastPlayed.StopPlaying();
+		}
+	}
 	public String[] getLocations(){
 		String[] locations = new String[searchedPlaces.size()];
 		int i = 0;

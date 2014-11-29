@@ -33,7 +33,7 @@ public class TestMainActivity extends ActivityInstrumentationTestCase2<MainActiv
 	@SmallTest
 	public void testLocationNotNull()
 	{
-		assertNotNull("Localización no encontrada", mainActivity.GetLocation());
+		assertNotNull("Localizaciï¿½n no encontrada", mainActivity.GetLocation());
 	}
 
 	@SmallTest
@@ -78,6 +78,7 @@ public class TestMainActivity extends ActivityInstrumentationTestCase2<MainActiv
 	{
 		// Se saca el instrumentation
 		Instrumentation instrumentation = getInstrumentation();
+		instrumentation.waitForIdleSync();
 		// Se registra la actividad a monitorear
 		ActivityMonitor mapActivityMonitor = instrumentation.addMonitor(MapActivity.class.getName(), null, false);
 		// Se simula la accion

@@ -124,17 +124,17 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 		if (didNotListenToTutorial){
 			//tts.speak(tutorial, TextToSpeech.QUEUE_FLUSH, null);
 		}
-		try 
-		{
-			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		placesManager.start();
+//		try 
+//		{
+//			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		placesManager.start();
 
 
 	}
@@ -209,6 +209,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			radius -= 50;
 			if(radius < 0)
 				radius = 0;
+			placesManager.stopCurrent();
 			String speech ="Radio " + String.valueOf(radius);
 			tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 		}
@@ -216,6 +217,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			radius += 50;
 			if (radius > 1000)
 				radius = 1000;
+			placesManager.stopCurrent();
 			String speech = "Radio " + String.valueOf(radius);
 			tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 		}
@@ -255,7 +257,7 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 	public boolean onDoubleTap(MotionEvent event) {
 		
 		// TODO Auto-generated method stub
-		tts.speak("Estamos buscando nuevos lugares, le avisaremos cuando estén listos", TextToSpeech.QUEUE_FLUSH, null);
+		//tts.speak("Estamos buscando nuevos lugares, le avisaremos cuando estén listos", TextToSpeech.QUEUE_FLUSH, null);
 		try 
 		{
 			placesManager.ParsePlaces(String.valueOf(radius), userLocation);
