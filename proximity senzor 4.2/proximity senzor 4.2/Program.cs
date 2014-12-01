@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading;
+using System.Runtime;
 using Microsoft.SPOT;
 using Microsoft.SPOT.Presentation;
 using Microsoft.SPOT.Presentation.Controls;
@@ -214,8 +215,16 @@ namespace proximity_senzor_4._2
             if (bt.IsConnected)
             {
 
-                client.Send("distance: " + currentDist.ToString() + ", angle: " + currentCompass.ToString() + ", x: " + compassX.ToString() + ", y: " + compassY.ToString() + ", z: " + compassZ.ToString());
-
+                int[] datos = new int[5];
+                datos[0] = currentDist;
+                datos[1] = currentCompass;
+                datos[2] = compassX;
+                datos[3] = compassY;
+                datos[4] = compassZ;
+                byte[] bytedata = new byte[datos.Length*sizeof(int)];
+             
+                client.Send ("distance: " + currentDist.ToString() + ", angle: " + currentCompass.ToString() + ", x: " + compassX.ToString() + ", y: " + compassY.ToString() + ", z: " + compassZ.ToString());
+                client.
             }
 
             
