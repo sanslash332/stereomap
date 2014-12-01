@@ -87,7 +87,7 @@ namespace proximity_senzor_4._2
         void compass_MeasurementComplete(Compass sender, Compass.SensorData sensorData)
         {
             currentCompass= (int)sensorData.Angle;
-            int frec = currentCompass * 10 + 20;
+            int frec = ((currentCompass+180)%360) * 10 + 20; //ajustado para rotar norte - sur
             compassX = sensorData.X;
             compassY = sensorData.Y;
             compassZ = sensorData.Z;
