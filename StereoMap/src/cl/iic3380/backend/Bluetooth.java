@@ -32,6 +32,7 @@ import android.view.ContextThemeWrapper;
 import android.widget.Adapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 public class Bluetooth extends Thread {
 
@@ -44,6 +45,7 @@ public class Bluetooth extends Thread {
 	private jockeyData jockey;	
 
 	public Bluetooth(){	
+		Log.v("MyActivity","&inicializando bluetooth");
 		adapter = BluetoothAdapter.getDefaultAdapter();
 		is_paired();
 		cntTask = new ConnectAsyncTask();
@@ -87,14 +89,15 @@ public class Bluetooth extends Thread {
 		return btDevices;
 	}
 
-	public void is_paired(){		
+	public void is_paired(){
+		Log.v("MyActivity","&buscando jockey");
 		Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 		// If there are paired devices
 		if (pairedDevices.size() > 0) {
 			// Loop through paired devices
 			for (BluetoothDevice device : pairedDevices) {
 				// Add the name and address to an array adapter to show in a ListView
-
+				Log.v("MyActivity","&dispositivo pareado agregado"+ device.getName());
 				btDevices.add(device);
 
 			}
@@ -107,11 +110,14 @@ public class Bluetooth extends Thread {
 		//Metodo que efectua la coneccion
 		//Buscar el Jockey por id, mac o UID (lo que se tenga) entre la lista de devices paireados, y instansear los sockets. ademas instansear listener para cuando se reciban datos.
 		adapter.cancelDiscovery();
+		Log.v("MyActivity","&conectando");
 		BluetoothDevice jockey = null;
 		for(BluetoothDevice dev : btDevices)
 		{
-			if(dev.getName() == "stereoJockeyMap")
+			Log.v("MyActivity","&dentro del for, analizando" + dev.getName());
+			if(dev.getName().equals("StereomapJockey"))
 			{
+				Log.v("MyActivity","&jockey encontrado");
 				jockey=dev;
 
 			}
@@ -119,6 +125,7 @@ public class Bluetooth extends Thread {
 		}
 		if(jockey!=null )
 		{
+			Log.v("MyActivity","&iniciando conexion");
 			btSocket = cntTask.execute(jockey).get();
 			
 
@@ -130,31 +137,67 @@ public class Bluetooth extends Thread {
 	@SuppressLint("NewApi") 
 	public void receiptData() throws IOException
 	{
+		Log.v("MyActivity","&Iniciando recepcion de datos");
 		InputStream mms=null;
 		InputStreamReader str =null;
 		BufferedReader reed =null;
 		while(btSocket.isConnected())
 		{
+			//Log.v("MyActivity","$dentro de while");
 			if(mms == null)
 			{
-				mms = btSocket.getInputStream();
-				str = new InputStreamReader(mms, Charset.defaultCharset());
+				Log.v("MyActivity","&creando streams");
+				mms = btSocket.getInputStream();				
+				str = new InputStreamReader(mms);
 				reed = new BufferedReader(str);
 
 			}
-
-			if(reed != null && reed.ready())
+			
+			Log.v("MyActivity","&&"+reed.toString()+ "----"+reed.ready());
+			if(reed.ready())
 			{
-				String jkContent = reed.readLine();
+				Log.v("MyActivity","&&&stream recibido");
+				String jkContent ="";
+				try{
+					Log.v("MyActivity","&&&antes de readline");
+					//int a =2;
+					//while (a== 2){
+					//	String ggg =Integer.toString(reed.read());
+					//	Log.v("MyActivity","&&&en string es " + ggg);
+					//}
+					jkContent= reed.readLine();
+//					byte[] arreglo = new byte[1024];
+//					int cantidad =	mms.read(arreglo,0,1024);
+//					Log.v("MyActivity","&&&recibidos " + cantidad);
+//					String s = new String(arreglo);
+//					Log.v("MyActivity","&&&el arreglo es "+s);
+					
+					Log.v("MyActivity","&&&despues de readline");
+					}
+				catch(Exception e){
+					Log.v("MyActivity","&&&error de readline");
+					e.printStackTrace();
+				}
+//				if (reed.readLine() == null){
+//					jkContent = "null";
+//				}
+//				else
+//					jkContent = reed.readLine();
+//				Log.v("MyActivity","&&&el contenido es "+jkContent.toString());
 				jockeyData jk = new jockeyData(jkContent);
 
 				if(!jk.isInvalid())
 				{
+					Log.v("MyActivity","&jockey actualizado");
 					this.jockey=jk;
+				}
+				else{
+					Log.v("MyActivity","&jockey invalido");
 				}
 			}
 
 		}
+		Log.v("MyActivity","&socket desconectado");
 	}
 
 	public void discover(){

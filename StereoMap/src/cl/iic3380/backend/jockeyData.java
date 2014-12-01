@@ -25,6 +25,7 @@ public class jockeyData {
 	 */
 	public jockeyData(String cod)
 	{
+		cod= cod.trim();
 		decodeString(cod);	
 	}
 
@@ -79,11 +80,11 @@ public class jockeyData {
 			this.invalid = false;
 
 
-			this.dist = Integer.parseInt(partes[0].split(":")[1]);
-			this.angle =  Integer.parseInt(partes[1].split(":")[1]);
-			this.x = Integer.parseInt(partes[2].split(":")[1]);
-			this.y =  Integer.parseInt(partes[3].split(":")[1]);
-			this.z = Integer.parseInt(partes[4].split(":")[1]);
+			this.dist = Integer.parseInt(partes[0].split(":")[1].trim());
+			this.angle =  Integer.parseInt(partes[1].split(":")[1].trim());
+			this.x = Integer.parseInt(partes[2].split(":")[1].trim());
+			this.y =  Integer.parseInt(partes[3].split(":")[1].trim());
+			this.z = Integer.parseInt(partes[4].split(":")[1].trim());
 
 		}
 

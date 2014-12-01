@@ -146,8 +146,9 @@ public class MainActivity extends Activity implements OnInitListener, OnGestureL
 			e.printStackTrace();
 		}
 		if(bt.isConected())
-		{
+		{			
 			bt.start();
+			Log.v("MyActivity","&jockey iniciado");
 		}
 
 		//Detector de gestos

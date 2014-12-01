@@ -93,6 +93,7 @@ public class Place extends Thread
 		//longitude este-oeste
 		double longitudeDifference = userLocation.getLongitude()-longitud;
 		double latitudeDifference = userLocation.getLatitude()-latitud;
+		//double distance= Math.sqrt(Math.pow(longitudeDifference,2) + Math.pow(latitudeDifference,2));
 		double magnitude = Math.sqrt(Math.pow(latitudeDifference, 2)+Math.pow(longitudeDifference, 2));
 		longitudeDifference /= magnitude;
 		latitudeDifference /= magnitude;
@@ -105,8 +106,11 @@ public class Place extends Thread
 
 		float finalLongitude = (float)(unitLatitude*Math.cos(radianAngle) - unitLongitude*Math.sin(radianAngle));
 		float finalLatitude = (float)(unitLatitude*Math.cos(radianAngle) + unitLongitude*Math.sin(radianAngle));
-
 		
+		if(magnitude >= 10.0f)
+			magnitude = 10;
+		finalLongitude = (float) (finalLongitude*magnitude);
+		finalLatitude = (float) (finalLatitude*magnitude);
 		currentSource.setPosition(finalLongitude, finalLatitude, 0);
 	}
 	

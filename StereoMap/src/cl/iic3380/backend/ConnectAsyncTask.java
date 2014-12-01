@@ -5,6 +5,7 @@ import java.util.UUID;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, BluetoothSocket>{
 
@@ -17,12 +18,14 @@ public class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, Blueto
 		mmDevice = device[0];
 
 		try {
-
+			Log.v("MyActivity","&conectando por uuid");
 			String mmUUID = "00001101-0000-1000-8000-00805F9B34FB";
 			mmSocket = mmDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(mmUUID));
 			mmSocket.connect();
 
-		} catch (Exception e) { }
+		} catch (Exception e) { 
+			e.printStackTrace();
+		}
 
 		return mmSocket;
 	}
